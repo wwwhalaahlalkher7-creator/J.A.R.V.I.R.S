@@ -7,7 +7,7 @@ JARVIS is developed in milestones, not as a ZIP per tiny code change.
 The repository contains three GitHub Actions workflows:
 
 - **Backend CI** — compiles the Python server, runs backend API/core tests, and starts the server for a health smoke test.
-- **Flutter CI** — installs the pinned Flutter toolchain, analyzes the application, and runs Flutter tests.
+- **Flutter & Android CI** — installs the pinned Flutter toolchain, analyzes the application, and runs Flutter tests.
 - **Android Debug Build** — produces an installable debug APK as a GitHub Actions artifact.
 
 The Android build is intentionally debug-only at this stage. No signing keys or production credentials belong in CI yet.

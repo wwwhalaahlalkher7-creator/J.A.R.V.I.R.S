@@ -1,4 +1,4 @@
-name: Flutter CI
+name: Flutter & Android CI
 
 on:
   push:
@@ -9,10 +9,13 @@ on:
 permissions:
   contents: read
 
+env:
+  JAVA_VERSION: '17'
+
 jobs:
-  flutter:
+  flutter-android:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 35
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -33,14 +36,23 @@ jobs:
       - name: Analyze
         run: bash scripts/flutter_analyze_ci.sh
 
-      - name: Upload analyzer log
-        if: always()
+      - name: Test
+        run: flutter test --reporter compact
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ env.JAVA_VERSION }}
+          cache: gradle
+
+      - name: Build debug APK
+        run: flutter build apk --debug
+
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: jarvis-flutter-analyze-log
-          path: ${{ runner.temp }}/jarvis-flutter-analyze.log
-          if-no-files-found: ignore
+          name: jarvis-debug-apk
+          path: build/app/outputs/flutter-apk/app-debug.apk
+          if-no-files-found: error
           retention-days: 7
-
-      - name: Test
-        run: flutter test --reporter expanded
