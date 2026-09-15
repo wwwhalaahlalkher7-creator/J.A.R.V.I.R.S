@@ -125,3 +125,9 @@ This release starts the productization layer without rewriting Hermes features.
 The active connection is projected into a nullable JARVIS runtime, allowing the
 application to start before a backend is configured and keeping future runtime
 changes localized behind the JARVIS boundary.
+
+## JARVIS development and CI
+
+The project is now organized as an independent JARVIS application around the existing Hermes Mobile transport/runtime boundary. See `JARVIS_DEV_WORKFLOW.md` for the executable development loop and GitHub Actions.
+
+CI provides three concrete checkpoints: backend tests + health smoke test, Flutter analysis/tests, and an Android debug APK artifact.

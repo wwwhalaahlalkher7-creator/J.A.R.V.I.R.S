@@ -1,0 +1,43 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: server
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: '3.13'
+          cache: pip
+          cache-dependency-path: server/uv.lock
+
+      - name: Install backend
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e .
+          python -m pip install 'pytest>=9.1.1'
+
+      - name: Compile backend
+        run: python -m compileall -q hermes_mobile_server
+
+      - name: Stable backend regression tests
+        run: timeout 60s python -m pytest -q tests/test_session_live_state.py tests/test_server.py --maxfail=1
+
+      - name: Server smoke test
+        run: ../scripts/backend_smoke.sh
