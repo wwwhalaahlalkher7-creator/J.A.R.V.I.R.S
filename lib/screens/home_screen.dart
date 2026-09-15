@@ -1,0 +1,996 @@
+library;
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../core/models.dart';
+import '../core/jarvis/jarvis_config.dart';
+import '../core/session_tree.dart';
+import '../core/stores/notification_store.dart';
+import '../core/stores/connection_store.dart';
+import '../core/stores/session_appearance_store.dart';
+import '../core/stores/session_store.dart';
+import '../l10n/l10n.dart';
+import '../theme/hermes_tokens.dart';
+import '../theme/hermes_glass_theme.dart';
+import '../widgets/glass/glass_button.dart';
+import '../widgets/h/hermes_badge.dart';
+import '../widgets/h/hermes_glass.dart';
+import '../widgets/h/hermes_logo.dart';
+import '../widgets/h/hermes_states.dart';
+import '../widgets/h/hermes_status.dart';
+import '../widgets/h/hermes_toast.dart';
+import '../widgets/mobile/hermes_mobile_surfaces.dart';
+import '../widgets/mobile/hermes_adaptive_menu.dart';
+import '../widgets/mobile/hermes_adaptive_ui.dart';
+import '../widgets/mobile/mobile_page_scaffold.dart';
+import '../widgets/session/session_card.dart';
+import '../widgets/session/session_list_meta.dart';
+import '../widgets/session/session_row_actions.dart';
+import 'chat_screen.dart';
+import 'feature_registry.dart';
+import 'notification_screen.dart';
+import 'session_list_screen.dart';
+import 'settings_hub_screen.dart';
+
+Widget _homeToolbarButton(
+  BuildContext context, {
+  Key? key,
+  required String tooltip,
+  required VoidCallback? onPressed,
+  required Widget icon,
+}) {
+  if (HermesGlassTheme.of(context).enabled) {
+    return GlassButton(
+      key: key,
+      tooltip: tooltip,
+      onPressed: onPressed,
+      child: icon,
+    );
+  }
+  return IconButton(
+    key: key,
+    tooltip: tooltip,
+    onPressed: onPressed,
+    icon: icon,
+  );
+}
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _QuickToolsEditorPage extends StatefulWidget {
+  const _QuickToolsEditorPage({required this.initial, required this.defaults});
+
+  final List<String> initial;
+  final List<String> defaults;
+
+  @override
+  State<_QuickToolsEditorPage> createState() => _QuickToolsEditorPageState();
+}
+
+class _QuickToolsEditorPageState extends State<_QuickToolsEditorPage> {
+  late List<String> _draft = List.of(widget.initial);
+
+  @override
+  Widget build(BuildContext context) {
+    return HermesPageScaffold(
+      title: context.l10n.homeEditQuickTools,
+      subtitle: context.l10n.homeQuickToolsDescription,
+      titleMode: HermesPageTitleMode.large,
+      maxContentWidth: HermesLayout.contentNarrow,
+      bodyPadding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+      body: ReorderableListView.builder(
+        buildDefaultDragHandles: false,
+        itemCount: _draft.length,
+        onReorderItem: (oldIndex, newIndex) {
+          setState(() {
+            final item = _draft.removeAt(oldIndex);
+            _draft.insert(newIndex, item);
+          });
+        },
+        itemBuilder: (context, index) {
+          final entry = hermesFeaturesById[_draft[index]]!;
+          return Padding(
+            key: ValueKey('quick-tool-editor-${entry.id}'),
+            padding: const EdgeInsets.only(bottom: 8),
+            child: HermesGroupedList(
+              children: [
+                HermesListRow(
+                  icon: entry.icon,
+                  title: entry.title(context.l10n),
+                  subtitle: index == 4
+                      ? context.l10n.homeLastVisibleTool
+                      : entry.subtitle(context.l10n),
+                  showDisclosure: false,
+                  trailing: ReorderableDragStartListener(
+                    index: index,
+                    child: Semantics(
+                      label: context.l10n.homeDragToReorder,
+                      button: true,
+                      child: const SizedBox.square(
+                        dimension: 44,
+                        child: Icon(Icons.drag_handle_rounded),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          );
+        },
+      ),
+      bottomAction: Row(
+        children: [
+          TextButton(
+            onPressed: () => setState(() => _draft = List.of(widget.defaults)),
+            child: Text(context.l10n.homeRestoreDefaults),
+          ),
+          const Spacer(),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(context.l10n.commonCancel),
+          ),
+          const SizedBox(width: 8),
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(_draft),
+            child: Text(context.l10n.commonSave),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  static const _toolOrderKey = 'hm_home_quick_tool_order';
+  static const _defaultToolOrder = hermesHomeDefaultToolOrder;
+  final Set<String> _expanded = {};
+  List<String> _toolOrder = List.of(_defaultToolOrder);
+  bool _loading = true;
+  bool _opening = false;
+  String? _openingSessionId;
+  bool _reconnecting = false;
+  int _generation = 0;
+
+  SessionStore get _store => context.read<SessionStore>();
+
+  @override
+  void initState() {
+    super.initState();
+    _loadToolOrder();
+    _load();
+  }
+
+  Future<void> _loadToolOrder() async {
+    final prefs = await SharedPreferences.getInstance();
+    final saved = prefs.getStringList(_toolOrderKey) ?? const [];
+    final valid = saved.where(hermesHomeToolIds.contains).toSet().toList();
+    valid.addAll(_defaultToolOrder.where((id) => !valid.contains(id)));
+    if (mounted) setState(() => _toolOrder = valid);
+  }
+
+  Future<void> _editToolOrder() async {
+    final saved = await Navigator.of(context).push<List<String>>(
+      MaterialPageRoute(
+        fullscreenDialog: true,
+        builder: (_) => _QuickToolsEditorPage(
+          initial: _toolOrder,
+          defaults: _defaultToolOrder,
+        ),
+      ),
+    );
+    if (saved == null || !mounted) return;
+    setState(() => _toolOrder = saved);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(_toolOrderKey, saved);
+  }
+
+  Future<void> _load() async {
+    if (_store.api == null) {
+      if (mounted) setState(() => _loading = false);
+      return;
+    }
+    final generation = ++_generation;
+    try {
+      await _store.loadProfileContext(listLimit: 20);
+    } finally {
+      if (mounted && generation == _generation) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
+  Future<void> _reconnect() async {
+    if (_reconnecting) return;
+    final connection = _store.connection;
+    setState(() => _reconnecting = true);
+    try {
+      await connection.reconnectAfterResume(refreshSocket: true);
+      if (!mounted) return;
+      await _load();
+      if (!mounted) return;
+      showHermesToast(
+        context,
+        message: context.l10n.commonConnected,
+        kind: HermesToastKind.success,
+      );
+    } catch (error) {
+      if (!mounted) return;
+      showHermesErrorSnackBar(
+        context,
+        error,
+        fallback: context.l10n.backendDisconnected,
+        onRetry: _reconnect,
+      );
+    } finally {
+      if (mounted) setState(() => _reconnecting = false);
+    }
+  }
+
+  Future<void> _switchProfile(String name) async {
+    if (name == _store.activeProfile || _store.api == null) return;
+    final generation = ++_generation;
+    setState(() {
+      _loading = true;
+      _expanded.clear();
+    });
+    try {
+      await _store.switchActiveProfile(name, listLimit: 20);
+    } catch (error) {
+      if (mounted) {
+        showHermesErrorSnackBar(
+          context,
+          error,
+          fallback: context.l10n.profilesSwitchFailed('$error'),
+          onRetry: () => _switchProfile(name),
+        );
+      }
+    } finally {
+      if (mounted && generation == _generation) {
+        setState(() => _loading = false);
+      }
+    }
+  }
+
+  Future<void> _openChat({SessionRow? row}) async {
+    if (_opening) return;
+    setState(() {
+      _opening = true;
+      _openingSessionId = row?.id;
+    });
+    try {
+      if (row != null) {
+        if (row.readOnly || row.isDelegatedChild) {
+          await _store.openReadOnlySession(row.id, profile: row.profile);
+        } else {
+          await _store.resumeSession(row.id, profile: row.profile);
+        }
+      } else {
+        await _store.openNewSession();
+      }
+    } catch (error) {
+      if (mounted) {
+        showHermesErrorSnackBar(
+          context,
+          error,
+          fallback: row == null
+              ? context.l10n.sessionCreateFailed('$error')
+              : context.l10n.sessionResumeFailed('$error'),
+          onRetry: () => _openChat(row: row),
+        );
+      }
+      return;
+    } finally {
+      if (mounted) {
+        setState(() {
+          _opening = false;
+          _openingSessionId = null;
+        });
+      }
+    }
+    if (!mounted) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const ChatScreen()));
+  }
+
+  Future<void> _openRunningSession() async {
+    final id = _store.durableId;
+    final rows = _store.sessions ?? const <SessionRow>[];
+    final active = id == null
+        ? null
+        : rows.cast<SessionRow?>().firstWhere(
+            (row) => row?.id == id,
+            orElse: () => null,
+          );
+    if (active != null) {
+      await _openChat(row: active);
+      return;
+    }
+    await _store.setStatusFilter({'working'});
+    if (!mounted) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SessionListScreen()));
+  }
+
+  Future<void> _openAttentionSessions() async {
+    await _store.setStatusFilter({'attention'});
+    if (!mounted) return;
+    Navigator.of(
+      context,
+    ).push(MaterialPageRoute(builder: (_) => const SessionListScreen()));
+  }
+
+  List<SessionRow> _recentRows(List<SessionRow> rows) {
+    final roots = rows
+        .where((row) => !row.isChildSession)
+        .take(5)
+        .map((e) => e.id)
+        .toSet();
+    final ids = <String>{...roots};
+    var changed = true;
+    while (changed) {
+      changed = false;
+      for (final row in rows) {
+        if (!ids.contains(row.id) && ids.contains(row.parentSessionId)) {
+          ids.add(row.id);
+          changed = true;
+        }
+      }
+    }
+    return rows.where((row) => ids.contains(row.id)).toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final store = context.watch<SessionStore>();
+    final rows = store.sessions ?? const <SessionRow>[];
+    final recent = _recentRows(rows);
+    final visible = buildVisibleSessionTree(recent, _expanded);
+    final parents = recent
+        .map((e) => e.parentSessionId)
+        .whereType<String>()
+        .toSet();
+    final running = store.info?.running == true;
+    final configuredModel = store.profileConfig['model']?.toString();
+    final model = configuredModel?.isNotEmpty == true
+        ? configuredModel!
+        : (store.info?.model ?? '—');
+    final attention = rows.where((row) => row.needsAttention).length;
+    SessionRow? runningRow;
+    for (final row in rows) {
+      if (!row.isChildSession && row.isActivelyWorking) {
+        runningRow = row;
+        break;
+      }
+    }
+    final width = MediaQuery.sizeOf(context).width;
+    final maxWidth = width >= HermesBreakpoints.desktop
+        ? HermesLayout.workspace
+        : (width >= HermesBreakpoints.phone ? HermesLayout.content : width);
+
+    return HermesPageScaffold(
+      title: JarvisConfig.productName,
+      scrollBodyBehindHeader: true,
+      extendBehindNavigation: true,
+      // Wide layouts already expose the app-shell rail/top chrome. Keeping
+      // Home's own compact bar there duplicates navigation and consumes the
+      // first content row; retain it only for phone-sized surfaces.
+      showAppBar: width < HermesBreakpoints.navigation,
+      maxContentWidth: maxWidth,
+      leading: _homeToolbarButton(
+        context,
+        key: const ValueKey('home-settings-avatar'),
+        tooltip: context.l10n.featureSettings,
+        onPressed: () => Navigator.of(
+          context,
+        ).push(MaterialPageRoute(builder: (_) => const SettingsHubScreen())),
+        icon: const HermesAgentAvatar(size: 34),
+      ),
+      actions: [
+        ListenableBuilder(
+          listenable: store.connection,
+          builder: (context, _) {
+            final connection = store.connection;
+            final phase = connection.phase;
+            final busy =
+                _reconnecting ||
+                phase == ConnectionPhase.connecting ||
+                phase == ConnectionPhase.reconnecting;
+            final connected = phase == ConnectionPhase.connected;
+            final status = switch (phase) {
+              ConnectionPhase.connected => context.l10n.commonConnected,
+              ConnectionPhase.connecting ||
+              ConnectionPhase.reconnecting => context.l10n.connectConnecting,
+              ConnectionPhase.disconnected ||
+              ConnectionPhase.exhausted => context.l10n.backendDisconnected,
+            };
+            final tooltip = busy
+                ? status
+                : '$status · ${context.l10n.paletteReconnectDesc}';
+            final colorScheme = Theme.of(context).colorScheme;
+            return _homeToolbarButton(
+              context,
+              key: const ValueKey('home-reconnect'),
+              tooltip: tooltip,
+              onPressed: connection.isConfigured && !busy ? _reconnect : null,
+              icon: busy
+                  ? const SizedBox.square(
+                      dimension: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : Icon(
+                      connected ? Icons.cloud_done_outlined : Icons.cloud_off,
+                      color: connected
+                          ? colorScheme.primary
+                          : colorScheme.error,
+                    ),
+            );
+          },
+        ),
+        if (store.profiles.isNotEmpty) _profileMenu(store),
+        Consumer<NotificationStore>(
+          builder: (context, notifications, _) => _homeToolbarButton(
+            context,
+            tooltip: context.l10n.notificationTitle,
+            icon: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                const Icon(Icons.notifications_none),
+                Positioned(
+                  right: -6,
+                  top: -4,
+                  child: HermesBadge(count: notifications.unreadCount),
+                ),
+              ],
+            ),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const NotificationScreen()),
+            ),
+          ),
+        ),
+        const SizedBox(width: 6),
+      ],
+      body: RefreshIndicator(
+        onRefresh: _load,
+        child: ListView(
+          padding: EdgeInsets.fromLTRB(
+            HermesMobileMetrics.pagePadding,
+            HermesMobileMetrics.pagePadding,
+            HermesMobileMetrics.pagePadding,
+            32 +
+                (HermesGlassTheme.of(context).enabled
+                    ? MediaQuery.paddingOf(context).bottom
+                    : 0),
+          ),
+          children: [
+            _continueHero(
+              running: running,
+              runningRow: runningRow,
+              model: model,
+              profile: store.activeProfile ?? 'default',
+            ),
+            HermesSectionHeader(
+              padding: const EdgeInsets.fromLTRB(4, 18, 4, 8),
+              title: context.l10n.homeQuickTools,
+              trailing: IconButton(
+                key: const ValueKey('edit-quick-tools'),
+                tooltip: context.l10n.homeEditQuickTools,
+                visualDensity: VisualDensity.compact,
+                onPressed: _editToolOrder,
+                icon: const Icon(Icons.tune_rounded, size: 18),
+              ),
+            ),
+            _quickTools(),
+            HermesSectionHeader(
+              padding: const EdgeInsets.fromLTRB(4, 18, 4, 8),
+              title: context.l10n.homeCurrentWork,
+            ),
+            _statusCards(running, model, attention),
+            HermesSectionHeader(
+              padding: const EdgeInsets.fromLTRB(4, 18, 4, 8),
+              title: context.l10n.homeRecentSessions,
+              trailing: TextButton.icon(
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const SessionListScreen()),
+                ),
+                iconAlignment: IconAlignment.end,
+                icon: const Icon(Icons.arrow_forward, size: 16),
+                label: Text(context.l10n.commonViewAll),
+              ),
+            ),
+            _recentWork(visible, parents),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _continueHero({
+    required bool running,
+    required SessionRow? runningRow,
+    required String model,
+    required String profile,
+  }) {
+    final palette = HermesPalette.of(context);
+    final title = runningRow?.title?.trim();
+    final liquid = HermesGlassTheme.of(context).enabled;
+    return Container(
+      key: const ValueKey('home-continue-hero'),
+      padding: const EdgeInsets.all(20),
+      decoration: liquid
+          ? ShapeDecoration(
+              shape: RoundedSuperellipseBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [palette.accent, palette.accentHover],
+              ),
+            )
+          : BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [palette.accent, palette.accentHover],
+              ),
+              borderRadius: BorderRadius.circular(20),
+              boxShadow: [
+                BoxShadow(
+                  color: palette.accent.withValues(alpha: .28),
+                  blurRadius: 28,
+                  offset: const Offset(0, 12),
+                ),
+              ],
+            ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.homeContinueWork,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 21,
+              height: 1.2,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            context.l10n.homeBackendSummary(model, profile),
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: Color(0xEBFFFFFF), fontSize: 13),
+          ),
+          const SizedBox(height: 13),
+          FilledButton(
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.white.withValues(alpha: .18),
+              foregroundColor: Colors.white,
+              elevation: 0,
+              padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 11),
+              shape: liquid
+                  ? const StadiumBorder()
+                  : RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+            ),
+            onPressed: () =>
+                runningRow != null ? _openChat(row: runningRow) : _openChat(),
+            child: Text(
+              running && title?.isNotEmpty == true
+                  ? context.l10n.homeContinueSession(title!)
+                  : context.l10n.homeStartNewSession,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _profileMenu(SessionStore store) => HermesAdaptiveMenuButton<String>(
+    key: const ValueKey('home-profile-menu'),
+    tooltip: context.l10n.homeSwitchProfile,
+    initialValue: store.activeProfile,
+    onSelected: _switchProfile,
+    itemBuilder: (_) => [
+      for (final profile in store.profiles)
+        PopupMenuItem(
+          value: profile.name,
+          child: Row(
+            children: [
+              Icon(
+                profile.name == store.activeProfile
+                    ? Icons.check_circle
+                    : Icons.circle_outlined,
+                size: 18,
+              ),
+              const SizedBox(width: 8),
+              Text(profile.name),
+            ],
+          ),
+        ),
+    ],
+    child: SizedBox.square(
+      dimension: 40,
+      child: Tooltip(
+        message: context.l10n.homeProfileTooltip(
+          store.activeProfile ?? context.l10n.homeDefaultProfile,
+        ),
+        child: const Icon(Icons.person_outline, size: 20),
+      ),
+    ),
+  );
+
+  Widget _statusCards(bool running, String model, int attention) {
+    final first = _StatusCard(
+      icon: running ? Icons.bolt : Icons.psychology_outlined,
+      color: running ? HermesSemantic.green : HermesSemantic.blue,
+      title: running
+          ? context.l10n.homeWorkingTitle
+          : context.l10n.homeReadyTitle,
+      detail: running ? context.l10n.homeWorkingDetail(model) : model,
+      action: running
+          ? context.l10n.homeViewSession
+          : context.l10n.homeStartNewSession,
+      busy: running,
+      onTap: running ? _openRunningSession : () => _openChat(),
+    );
+    if (attention == 0) return first;
+    final second = _StatusCard(
+      icon: attention > 0
+          ? Icons.notification_important_outlined
+          : Icons.task_alt_outlined,
+      color: attention > 0 ? HermesSemantic.orange : HermesSemantic.green,
+      title: context.l10n.homeNeedsAttention(attention),
+      detail: context.l10n.homeAttentionDetail,
+      action: context.l10n.homeViewAttentionSessions,
+      onTap: _openAttentionSessions,
+    );
+    return LayoutBuilder(
+      builder: (_, constraints) {
+        if (constraints.maxWidth < HermesBreakpoints.navigation) {
+          return Column(children: [first, const SizedBox(height: 10), second]);
+        }
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(child: first),
+            const SizedBox(width: 12),
+            Expanded(child: second),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _recentWork(List<SessionTreeItem> rows, Set<String> parents) {
+    if (_loading) {
+      return HermesLoadingState(label: context.l10n.homeLoadingRecent);
+    }
+    if ((_store.sessions ?? const []).isEmpty) {
+      return HermesEmptyState(
+        icon: Icons.chat_bubble_outline,
+        title: context.l10n.homeNoWorkTitle,
+        description: context.l10n.homeNoWorkDescription,
+      );
+    }
+    return HermesGlassCard(
+      radius: HermesMobileMetrics.groupRadius,
+      padding: EdgeInsets.zero,
+      child: Column(
+        children: [
+          for (var i = 0; i < rows.length; i++) ...[
+            _recentTile(rows[i], parents.contains(rows[i].row.id)),
+            if (i < rows.length - 1) const Divider(height: 1, indent: 60),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _recentTile(SessionTreeItem item, bool hasChildren) {
+    final row = item.row;
+    final sessionColor = context.watch<SessionAppearanceStore>().colorFor(
+      row.id,
+    );
+    return Padding(
+      padding: EdgeInsets.only(left: item.depth * 24, top: 2, bottom: 2),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(HermesRadius.card),
+          onTap: () => _openChat(row: row),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+            child: FutureBuilder<bool>(
+              future: _store.hasUnreadForSession(row),
+              builder: (_, snap) => Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  SessionCard(
+                    session: row,
+                    attention: row.needsAttention,
+                    working: !row.needsAttention && row.isActivelyWorking,
+                    unread: snap.data == true,
+                    sessionColor: sessionColor,
+                    childrenCount: hasChildren ? 1 : 0,
+                    expanded: _expanded.contains(row.id),
+                    expandButtonKey: ValueKey('home-session-toggle-${row.id}'),
+                    onToggleExpand: () => setState(() {
+                      if (!_expanded.add(row.id)) _expanded.remove(row.id);
+                    }),
+                    onMore: () => SessionRowActions.show(
+                      context,
+                      session: row,
+                      isArchived: row.archived,
+                      isStarred: row.pinned,
+                      onRefreshed: _load,
+                    ),
+                    extraBadges: SessionMetaBadges(row: row),
+                  ),
+                  if (_openingSessionId == row.id)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Semantics(
+                        key: ValueKey('home-session-opening-${row.id}'),
+                        liveRegion: true,
+                        child: Text(
+                          context.l10n.commonLoading,
+                          style: TextStyle(
+                            color: HermesPalette.of(context).text2,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _tool(String id) {
+    final entry = hermesFeaturesById[id]!;
+    return _ToolTile(
+      icon: entry.icon,
+      label: entry.title(context.l10n),
+      subtitle: entry.subtitle(context.l10n),
+      onTap: () => entry.open(context),
+    );
+  }
+
+  Widget _quickTools() => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact = constraints.maxWidth < HermesBreakpoints.navigation;
+      final scale = MediaQuery.textScalerOf(context).scale(1);
+      return GridView.builder(
+        key: const ValueKey('home-quick-tools'),
+        // The outer page owns safe-area padding and scrolling. Inheriting
+        // MediaQuery padding here leaves a second bottom gap before Work.
+        padding: EdgeInsets.zero,
+        primary: false,
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: 6,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: compact ? 3 : 6,
+          mainAxisSpacing: 9,
+          crossAxisSpacing: 9,
+          // Do not cap height growth at 2x while the labels keep scaling.
+          // The surrounding page scrolls when accessibility text needs space.
+          mainAxisExtent: 108 + ((scale - 1).clamp(0, double.infinity) * 54),
+        ),
+        itemBuilder: (context, index) {
+          if (index < 5) {
+            final id = _toolOrder[index];
+            return KeyedSubtree(
+              key: ValueKey('quick-tool-$id'),
+              child: _tool(id),
+            );
+          }
+          return _moreTools(_toolOrder.skip(5));
+        },
+      );
+    },
+  );
+
+  Widget _moreTools(Iterable<String> ids) => HermesAdaptiveMenuButton<String>(
+    tooltip: context.l10n.homeMoreTools,
+    onSelected: (id) => hermesFeaturesById[id]?.open(context),
+    itemBuilder: (_) => [
+      for (final id in ids) _moreItem(hermesFeaturesById[id]!),
+    ],
+    child: _ToolContent(
+      icon: Icons.more_horiz,
+      label: context.l10n.navMore,
+      subtitle: context.l10n.homeAllFeatures,
+    ),
+  );
+
+  PopupMenuItem<String> _moreItem(HermesFeatureEntry tool) => PopupMenuItem(
+    value: tool.id,
+    child: Row(
+      children: [
+        Icon(tool.icon, size: 20),
+        const SizedBox(width: 10),
+        Text(tool.title(context.l10n)),
+      ],
+    ),
+  );
+}
+
+class _StatusCard extends StatelessWidget {
+  const _StatusCard({
+    required this.icon,
+    required this.color,
+    required this.title,
+    required this.detail,
+    required this.action,
+    required this.onTap,
+    this.busy = false,
+  });
+  final IconData icon;
+  final Color color;
+  final String title;
+  final String detail;
+  final String action;
+  final VoidCallback onTap;
+  final bool busy;
+
+  @override
+  Widget build(BuildContext context) {
+    final palette = HermesPalette.of(context);
+    return HermesMobileCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 31,
+                height: 31,
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: .12),
+                  borderRadius: BorderRadius.circular(9),
+                ),
+                child: Icon(icon, size: 17, color: color),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14.5,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              HermesStatusChip(
+                label: busy
+                    ? context.l10n.statusRunning
+                    : context.l10n.statusReady,
+                color: color,
+              ),
+            ],
+          ),
+          const SizedBox(height: 7),
+          Text(
+            detail,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: palette.text3),
+          ),
+          if (busy) ...[
+            const SizedBox(height: 8),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: LinearProgressIndicator(
+                minHeight: 7,
+                color: color,
+                backgroundColor: palette.codeBg,
+              ),
+            ),
+          ],
+          Align(
+            alignment: Alignment.centerLeft,
+            child: TextButton(
+              style: TextButton.styleFrom(
+                visualDensity: VisualDensity.compact,
+                padding: const EdgeInsets.only(top: 5, right: 8),
+              ),
+              onPressed: onTap,
+              child: Text(action),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ToolTile extends StatelessWidget {
+  const _ToolTile({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+    required this.onTap,
+  });
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  final VoidCallback onTap;
+  @override
+  Widget build(BuildContext context) => HermesMobileQuickTile(
+    icon: icon,
+    title: label,
+    subtitle: subtitle,
+    onTap: onTap,
+  );
+}
+
+class _ToolContent extends StatelessWidget {
+  const _ToolContent({
+    required this.icon,
+    required this.label,
+    required this.subtitle,
+  });
+  final IconData icon;
+  final String label;
+  final String subtitle;
+  @override
+  Widget build(BuildContext context) {
+    final palette = HermesPalette.of(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 6),
+      decoration: BoxDecoration(
+        color: palette.surface,
+        borderRadius: BorderRadius.circular(HermesMobileMetrics.tileRadius),
+        border: Border.all(color: palette.border),
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: palette.accentBg,
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(icon, size: 19, color: palette.accent),
+          ),
+          const SizedBox(height: 7),
+          Text(
+            label,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(fontSize: 12.5, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 2),
+          Text(
+            subtitle,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(color: palette.text3, fontSize: 10.5),
+          ),
+        ],
+      ),
+    );
+  }
+}

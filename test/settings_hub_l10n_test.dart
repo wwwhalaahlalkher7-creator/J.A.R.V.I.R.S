@@ -1,0 +1,379 @@
+import 'package:flutter/material.dart';
+import 'package:hermes_mobile/theme/hermes_theme.dart';
+import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:hermes_mobile/core/api_client.dart';
+import 'package:hermes_mobile/core/stores/appearance_store.dart';
+import 'package:hermes_mobile/core/stores/connection_store.dart';
+import 'package:hermes_mobile/core/stores/locale_store.dart';
+import 'package:hermes_mobile/core/stores/profile_scope_store.dart';
+import 'package:hermes_mobile/core/stores/terminal_store.dart';
+import 'package:hermes_mobile/l10n/l10n.dart';
+import 'package:hermes_mobile/screens/schema_config_screen.dart';
+import 'package:hermes_mobile/screens/settings_hub_screen.dart';
+import 'package:hermes_mobile/screens/settings_screen.dart';
+import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  testWidgets('Liquid appearance uses a pinned scroll-owned header', (
+    tester,
+  ) async {
+    await _pumpSettings(tester, locale: const Locale('en'), liquid: true);
+    await tester.tap(find.text('Appearance'));
+    await tester.pumpAndSettle();
+    expect(find.byType(SliverAppBar), findsOneWidget);
+    expect(
+      tester.widget<SliverAppBar>(find.byType(SliverAppBar)).pinned,
+      isTrue,
+    );
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -400));
+    await tester.pumpAndSettle();
+    expect(find.text('Appearance').hitTestable(), findsOneWidget);
+    await tester.pageBack();
+    await tester.pumpAndSettle();
+    expect(find.text('Personalization'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('theme previews expose selection and respect reduced motion', (
+    tester,
+  ) async {
+    await _pumpSettings(
+      tester,
+      locale: const Locale('en'),
+      liquid: true,
+      reducedMotion: true,
+    );
+    await tester.tap(find.text('Appearance'));
+    await tester.pumpAndSettle();
+    final card = find.byKey(const ValueKey('theme-preview-indigo'));
+    await tester.ensureVisible(card);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Semantics>(card).properties.selected, isFalse);
+    expect(tester.widget<Semantics>(card).properties.button, isTrue);
+    final animated = find.descendant(
+      of: card,
+      matching: find.byType(AnimatedContainer),
+    );
+    expect(tester.widget<AnimatedContainer>(animated).duration, Duration.zero);
+    await tester.tap(card);
+    await tester.pumpAndSettle();
+    expect(tester.widget<Semantics>(card).properties.selected, isTrue);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('settings hub renders localized English navigation', (
+    tester,
+  ) async {
+    await _pumpSettings(tester, locale: const Locale('en'));
+
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Personalization'), findsOneWidget);
+    expect(find.text('Appearance'), findsOneWidget);
+    expect(find.text('个性化'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Arabic settings use RTL and tolerate 1.6x text', (tester) async {
+    await _pumpSettings(
+      tester,
+      locale: const Locale('ar'),
+      textScaler: const TextScaler.linear(1.6),
+    );
+
+    final directionality = tester.widget<Directionality>(
+      find.byType(Directionality).first,
+    );
+    expect(directionality.textDirection, TextDirection.rtl);
+    expect(find.text('التخصيص'), findsOneWidget);
+    expect(find.text('المظهر'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  for (final locale in [const Locale('en'), const Locale('ar')]) {
+    for (final width in [320.0, 390.0, 430.0, 768.0, 1280.0]) {
+      for (final scale in [1.0, 2.0]) {
+        for (final brightness in Brightness.values) {
+          testWidgets(
+            'Liquid appearance and language width=$width scale=$scale $locale $brightness',
+            (tester) async {
+              final localeStore = await _pumpSettings(
+                tester,
+                locale: locale,
+                brightness: brightness,
+                liquid: true,
+                width: width,
+                textScaler: TextScaler.linear(scale),
+              );
+              final l10n = AppLocalizations.of(
+                tester.element(find.byType(SettingsHubScreen)),
+              );
+              await tester.tap(find.text(l10n.appearanceTitle));
+              await tester.pumpAndSettle();
+              final themeCard = find.byKey(
+                const ValueKey('theme-preview-indigo'),
+              );
+              await Scrollable.ensureVisible(
+                tester.element(themeCard),
+                alignment: .5,
+              );
+              await tester.pumpAndSettle();
+              expect(themeCard.hitTestable(), findsOneWidget);
+              await tester.tap(themeCard);
+              await tester.pumpAndSettle();
+              expect(
+                tester.widget<Semantics>(themeCard).properties.selected,
+                isTrue,
+              );
+              final picker = find.byKey(
+                const ValueKey('appearance-language-picker'),
+              );
+              await Scrollable.ensureVisible(
+                tester.element(picker),
+                alignment: .5,
+              );
+              await tester.pumpAndSettle();
+              await tester.tap(picker);
+              await tester.pumpAndSettle();
+              final option = find.byKey(
+                const ValueKey('language-option-zh_Hant'),
+              );
+              await tester.ensureVisible(option);
+              await tester.pumpAndSettle();
+              expect(
+                MediaQuery.textScalerOf(tester.element(option)).scale(14),
+                14 * scale,
+              );
+              final labels = tester.widgetList<Text>(
+                find.descendant(of: option, matching: find.byType(Text)),
+              );
+              expect(
+                labels.where(
+                  (label) => label.overflow == TextOverflow.ellipsis,
+                ),
+                isEmpty,
+              );
+              await tester.tap(option);
+              await tester.pumpAndSettle();
+              expect(localeStore.tag, 'zh_Hant');
+              expect(tester.takeException(), isNull);
+            },
+          );
+        }
+      }
+    }
+  }
+
+  testWidgets('language picker uses a mobile sheet and updates selection', (
+    tester,
+  ) async {
+    final localeStore = await _pumpSettings(tester, locale: const Locale('en'));
+
+    await tester.tap(find.text('Appearance'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('appearance-language-picker')), findsOne);
+    expect(find.byType(DropdownButton<String>), findsNothing);
+
+    await tester.tap(find.byKey(const ValueKey('appearance-language-picker')));
+    await tester.pumpAndSettle();
+    for (final tag in ['system', 'en', 'zh', 'zh_Hant', 'ja', 'ar']) {
+      expect(find.byKey(ValueKey('language-option-$tag')), findsOneWidget);
+    }
+    expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('language-option-zh')));
+    await tester.pumpAndSettle();
+    expect(localeStore.tag, 'zh');
+    expect(find.byKey(const ValueKey('language-option-zh')), findsNothing);
+    expect(find.text('简体中文'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('system settings render English without Chinese fallbacks', (
+    tester,
+  ) async {
+    await _pumpLocalizedScreen(
+      tester,
+      locale: const Locale('en'),
+      child: const SettingsScreen(),
+      includeTerminal: true,
+    );
+
+    expect(find.text('System and connection'), findsOneWidget);
+    expect(find.text('Terminal font'), findsOneWidget);
+    expect(find.text('Change connection'), findsOneWidget);
+    expect(find.text('系统与连接'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('system settings expose config loading failures', (tester) async {
+    final connection = ConnectionStore()..api = _FailingConfigApi();
+    addTearDown(connection.dispose);
+    await tester.pumpWidget(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider<ConnectionStore>.value(value: connection),
+          ChangeNotifierProvider(
+            create: (_) => TerminalStore(connection: connection),
+          ),
+        ],
+        child: const MaterialApp(home: SettingsScreen()),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('config unavailable'), findsOneWidget);
+    expect(find.byType(MaterialBanner), findsOneWidget);
+  });
+
+  testWidgets('Arabic system settings tolerate RTL and 1.6x text', (
+    tester,
+  ) async {
+    await _pumpLocalizedScreen(
+      tester,
+      locale: const Locale('ar'),
+      textScaler: const TextScaler.linear(1.6),
+      child: const SettingsScreen(),
+      includeTerminal: true,
+    );
+
+    expect(find.text('النظام والاتصال'), findsOneWidget);
+    expect(find.text('خط الطرفية'), findsOneWidget);
+    expect(find.text('تغيير الاتصال'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('schema config scope and loading state localize to Arabic', (
+    tester,
+  ) async {
+    await _pumpLocalizedScreen(
+      tester,
+      locale: const Locale('ar'),
+      textScaler: const TextScaler.linear(1.6),
+      child: const SchemaConfigScreen(),
+      includeProfileScope: true,
+      settle: false,
+    );
+
+    expect(find.text('الاتصال'), findsOneWidget);
+    expect(find.text('ينطبق على ملف التعريف'), findsOneWidget);
+    expect(find.text('جارٍ تحميل الإعداد وschema…'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+}
+
+class _FailingConfigApi extends ApiClient {
+  _FailingConfigApi()
+    : super(baseUrl: 'http://contract.invalid', apiKey: 'test-key');
+
+  @override
+  Future<dynamic> get(
+    String path, {
+    Map<String, String>? query,
+    Duration? timeout,
+  }) async {
+    throw ApiException(503, 'config unavailable');
+  }
+}
+
+Future<void> _pumpLocalizedScreen(
+  WidgetTester tester, {
+  required Locale locale,
+  required Widget child,
+  TextScaler textScaler = TextScaler.noScaling,
+  bool includeTerminal = false,
+  bool includeProfileScope = false,
+  bool settle = true,
+}) async {
+  tester.view.physicalSize = const Size(390, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  final connection = ConnectionStore();
+  addTearDown(connection.dispose);
+  await tester.pumpWidget(
+    MaterialApp(
+      locale: locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: MediaQuery(
+        data: MediaQueryData(textScaler: textScaler),
+        child: MultiProvider(
+          providers: [
+            ChangeNotifierProvider<ConnectionStore>.value(value: connection),
+            if (includeTerminal)
+              ChangeNotifierProvider(
+                create: (_) => TerminalStore(connection: connection),
+              ),
+            if (includeProfileScope)
+              ChangeNotifierProvider(create: (_) => ProfileScopeStore()),
+          ],
+          child: child,
+        ),
+      ),
+    ),
+  );
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+  }
+}
+
+Future<LocaleStore> _pumpSettings(
+  WidgetTester tester, {
+  required Locale locale,
+  bool liquid = false,
+  TextScaler textScaler = TextScaler.noScaling,
+  double width = 390,
+  bool reducedMotion = false,
+  Brightness brightness = Brightness.light,
+}) async {
+  tester.view.physicalSize = Size(width, 844);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.resetPhysicalSize);
+  addTearDown(tester.view.resetDevicePixelRatio);
+
+  final localeStore = LocaleStore();
+  await localeStore.setLocale(locale);
+  await tester.pumpWidget(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => AppearanceStore()),
+        ChangeNotifierProvider.value(value: localeStore),
+      ],
+      child: MaterialApp(
+        builder: (context, child) => MediaQuery(
+          data: MediaQuery.of(
+            context,
+          ).copyWith(textScaler: textScaler, disableAnimations: reducedMotion),
+          child: child!,
+        ),
+        theme: liquid
+            ? buildHermesTheme(
+                brightness: brightness,
+                visualStyle: HermesVisualStyle.liquid,
+              )
+            : null,
+        locale: locale,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: const SettingsHubScreen(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  return localeStore;
+}

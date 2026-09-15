@@ -1,0 +1,1325 @@
+library;
+
+import 'dart:async';
+import 'dart:convert';
+
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+import '../core/api_client.dart';
+import '../core/connection_reload_mixin.dart';
+import '../core/external_links.dart';
+import '../core/stores/connection_store.dart';
+import '../core/stores/profile_scope_store.dart';
+import '../theme/hermes_tokens.dart';
+import '../widgets/h/hermes_confirm_dialog.dart';
+import '../widgets/h/hermes_glass.dart';
+import '../widgets/h/hermes_states.dart';
+import '../widgets/h/hermes_status.dart';
+import '../widgets/h/hermes_toast.dart';
+import '../widgets/mobile/hermes_mobile_surfaces.dart';
+import '../widgets/mobile/mobile_page_scaffold.dart';
+import '../widgets/profile_scope_selector.dart';
+import '../l10n/l10n.dart';
+
+class MemoryScreen extends StatefulWidget {
+  const MemoryScreen({super.key});
+
+  @override
+  State<MemoryScreen> createState() => _MemoryScreenState();
+}
+
+class _MemoryScreenState extends State<MemoryScreen>
+    with ConnectionReloadMixin<MemoryScreen> {
+  ProfileScopeStore? _scope;
+  String? _lastProfile;
+  Map<String, dynamic>? _status;
+  Map<String, dynamic>? _curator;
+  String? _error;
+  String? _curatorError;
+  bool _busy = false;
+  int _loadToken = 0;
+
+  String? get _profile => _scope?.override;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    observeConnection(context.read<ConnectionStore>(), _reloadForTarget);
+    final scope = context.read<ProfileScopeStore>();
+    if (identical(scope, _scope)) return;
+    _scope?.removeListener(_onScopeChanged);
+    _scope = scope..addListener(_onScopeChanged);
+    _lastProfile = _profile;
+    unawaited(scope.ensureLoaded());
+    unawaited(_load());
+  }
+
+  void _onScopeChanged() {
+    final next = _profile;
+    if (next == _lastProfile) return;
+    _lastProfile = next;
+    _reloadForTarget();
+  }
+
+  void _reloadForTarget() {
+    if (!mounted) return;
+    ++_loadToken;
+    setState(() {
+      _status = null;
+      _curator = null;
+      _curatorError = null;
+      _error = null;
+      _busy = false;
+    });
+    unawaited(_load());
+  }
+
+  Future<void> _load() async {
+    final api = context.read<ConnectionStore>().api;
+    if (api == null) {
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _error = connectionOfflineErrorCode;
+        });
+      }
+      return;
+    }
+    final token = ++_loadToken;
+    final profile = _profile;
+    if (mounted && _busy) setState(() => _busy = false);
+    try {
+      final status = await api.memoryStatus(profile: profile);
+      Map<String, dynamic>? curator;
+      String? curatorError;
+      try {
+        curator = await api.curatorStatus();
+      } catch (error) {
+        curatorError = '$error';
+      }
+      if (!mounted ||
+          token != _loadToken ||
+          profile != _profile ||
+          !identical(api, context.read<ConnectionStore>().api)) {
+        return;
+      }
+      setState(() {
+        _status = status;
+        _curator = curator;
+        _curatorError = curatorError;
+        _error = null;
+      });
+    } catch (error) {
+      if (!mounted ||
+          token != _loadToken ||
+          profile != _profile ||
+          !identical(api, context.read<ConnectionStore>().api)) {
+        return;
+      }
+      setState(() => _error = '$error');
+    }
+  }
+
+  Future<void> _selectProvider(String name) async {
+    final connection = context.read<ConnectionStore>();
+    final api = connectedApiOrNotify(context, connection);
+    if (api == null) return;
+    final profile = _profile;
+    setState(() => _busy = true);
+    try {
+      await api.memorySetProvider(name, profile: profile);
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        await _load();
+      }
+    } catch (error) {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        showHermesToast(
+          context,
+          message: context.l10n.memorySwitchFailed('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _configureProvider(Map<String, dynamic> provider) async {
+    final name = (provider['name'] ?? '').toString();
+    if (name.isEmpty) return;
+    final connection = context.read<ConnectionStore>();
+    final api = connectedApiOrNotify(context, connection);
+    if (api == null) return;
+    final profile = _profile;
+    final changed = await showMobileSheet<bool>(
+      context,
+      (_) => _MemoryProviderSheet(
+        api: api,
+        provider: name,
+        providerInfo: provider,
+        profile: _profile,
+      ),
+    );
+    if (changed == true &&
+        mounted &&
+        identical(api, connection.api) &&
+        profile == _profile) {
+      await _load();
+    }
+  }
+
+  Future<void> _reset() async {
+    final connection = context.read<ConnectionStore>();
+    final api = connectedApiOrNotify(context, connection);
+    if (api == null) return;
+    final profile = _profile;
+    final target = await showMobileSheet<String>(
+      context,
+      (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              title: Text(context.l10n.memoryResetScope),
+              subtitle: Text(context.l10n.memoryResetScopeDescription),
+            ),
+            ListTile(
+              leading: const Icon(Icons.delete_sweep_outlined),
+              title: Text(context.l10n.memoryAll),
+              subtitle: Text(context.l10n.memoryAllFiles),
+              onTap: () => Navigator.pop(ctx, 'all'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.psychology_outlined),
+              title: Text(context.l10n.memoryLongTerm),
+              subtitle: Text(context.l10n.memoryLongTermFile),
+              onTap: () => Navigator.pop(ctx, 'memory'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.person_outline),
+              title: Text(context.l10n.memoryUser),
+              subtitle: Text(context.l10n.memoryUserFile),
+              onTap: () => Navigator.pop(ctx, 'user'),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (target == null || !mounted) return;
+    if (!identical(api, connection.api) || profile != _profile) {
+      showHermesToast(
+        context,
+        message: context.l10n.backendDisconnected,
+        kind: HermesToastKind.error,
+      );
+      return;
+    }
+    final confirmed = await showHermesConfirmDialog(
+      context: context,
+      title: context.l10n.memoryResetQuestion,
+      message: context.l10n.memoryResetWarning,
+      confirmLabel: context.l10n.commonReset,
+      destructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    if (!identical(api, connection.api) || profile != _profile) {
+      showHermesToast(
+        context,
+        message: context.l10n.backendDisconnected,
+        kind: HermesToastKind.error,
+      );
+      return;
+    }
+    setState(() => _busy = true);
+    try {
+      final result = await api.memoryReset(target: target, profile: profile);
+      if (!mounted) return;
+      requireActiveApi(context, connection, api);
+      if (profile != _profile) {
+        throw StateError(context.l10n.backendDisconnected);
+      }
+      await _load();
+      if (!mounted) return;
+      final deleted = (result['deleted'] as List? ?? const []).join('、');
+      showHermesToast(
+        context,
+        message: deleted.isEmpty
+            ? context.l10n.memoryNothingDeleted
+            : context.l10n.memoryDeleted(deleted),
+        kind: HermesToastKind.success,
+      );
+    } catch (error) {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryResetFailed('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _setCuratorPaused(bool paused) async {
+    final connection = context.read<ConnectionStore>();
+    final api = connectedApiOrNotify(context, connection);
+    if (api == null) return;
+    final profile = _profile;
+    setState(() => _busy = true);
+    try {
+      final result = await api.setCuratorPaused(paused);
+      if (!mounted || !identical(api, connection.api) || profile != _profile) {
+        return;
+      }
+      setState(() => _curator = {...?_curator, ...result});
+    } catch (error) {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryCuratorUpdateFailed('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  Future<void> _runCurator() async {
+    final connection = context.read<ConnectionStore>();
+    final api = connectedApiOrNotify(context, connection);
+    if (api == null) return;
+    final profile = _profile;
+    setState(() => _busy = true);
+    try {
+      await api.runCurator();
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryCuratorStarted,
+          kind: HermesToastKind.success,
+        );
+      }
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        await _load();
+      }
+    } catch (error) {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryCuratorRunFailed('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (mounted && identical(api, connection.api) && profile == _profile) {
+        setState(() => _busy = false);
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return MobilePageScaffold(
+      title: context.l10n.memoryTitle,
+      actions: [
+        IconButton(
+          tooltip: context.l10n.commonRefresh,
+          onPressed: _busy ? null : _load,
+          icon: const Icon(Icons.refresh),
+        ),
+      ],
+      body: _buildBody(),
+    );
+  }
+
+  Widget _buildBody() {
+    final status = _status;
+    if (status == null && _error == null) {
+      return HermesLoadingState(label: context.l10n.memoryLoading);
+    }
+    if (status == null) {
+      return HermesErrorState(
+        description: _error == connectionOfflineErrorCode
+            ? context.l10n.backendDisconnected
+            : _error,
+        onRetry: _load,
+      );
+    }
+    final active = (status['active'] ?? '').toString();
+    final providers = (status['providers'] as List? ?? const [])
+        .whereType<Map>()
+        .map((value) => value.cast<String, dynamic>())
+        .toList();
+    final builtin =
+        (status['builtin_files'] as Map?)?.cast<String, dynamic>() ?? {};
+    return RefreshIndicator(
+      onRefresh: _load,
+      child: ListView(
+        padding: const EdgeInsets.all(HermesSpacing.md),
+        children: [
+          if (_error != null) ...[
+            HermesNoticeBar(
+              message: _error == connectionOfflineErrorCode
+                  ? context.l10n.backendDisconnected
+                  : _error!,
+              color: HermesSemantic.red,
+              icon: Icons.error_outline,
+              onTap: _load,
+            ),
+            const SizedBox(height: HermesSpacing.sm),
+          ],
+          const ProfileScopeChips(),
+          HermesGlassCard(
+            radius: HermesRadius.largeCard,
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                const Icon(Icons.memory_outlined, color: HermesSemantic.purple),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        context.l10n.memoryCurrentProvider,
+                        style: const TextStyle(fontSize: 12),
+                      ),
+                      Text(
+                        active.isEmpty ? context.l10n.memoryDisabled : active,
+                        style: HermesType.onSurface(
+                          HermesType.headline,
+                          Theme.of(context),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                HermesStatusChip(
+                  color: active.isEmpty
+                      ? HermesSemantic.gray
+                      : HermesSemantic.green,
+                  label: active.isEmpty
+                      ? context.l10n.memoryDisabled
+                      : context.l10n.memoryEnabled,
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: HermesSpacing.lg),
+          HermesSectionHeader(title: context.l10n.memoryProviders),
+          if (providers.isEmpty)
+            HermesEmptyState(
+              icon: Icons.extension_off_outlined,
+              title: context.l10n.memoryNoProviders,
+            )
+          else
+            HermesMobileGroup(
+              children: [
+                for (final provider in providers)
+                  _providerRow(provider, active),
+              ],
+            ),
+          const SizedBox(height: HermesSpacing.lg),
+          _curatorCard(),
+          const SizedBox(height: HermesSpacing.lg),
+          HermesSectionHeader(title: context.l10n.memoryBuiltInFiles),
+          HermesMobileGroup(
+            children: [
+              HermesMobileRow(
+                icon: Icons.psychology_outlined,
+                title: 'MEMORY.md',
+                trailing: Text(
+                  context.l10n.commonBytes(builtin['memory'] ?? 0),
+                ),
+              ),
+              HermesMobileRow(
+                icon: Icons.person_outline,
+                title: 'USER.md',
+                trailing: Text(context.l10n.commonBytes(builtin['user'] ?? 0)),
+              ),
+            ],
+          ),
+          const SizedBox(height: HermesSpacing.md),
+          OutlinedButton.icon(
+            style: OutlinedButton.styleFrom(
+              foregroundColor: HermesSemantic.red,
+            ),
+            onPressed: _busy ? null : _reset,
+            icon: const Icon(Icons.delete_forever_outlined),
+            label: Text(context.l10n.memoryReset),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _providerRow(Map<String, dynamic> provider, String active) {
+    final name = (provider['name'] ?? '').toString();
+    final description = (provider['description'] ?? '').toString();
+    final status = (provider['status'] ?? '').toString();
+    final available = provider['available'] != false && status != 'unavailable';
+    final configured = provider['configured'] == true;
+    final selected = name == active;
+    return HermesMobileRow(
+      icon: Icons.storage_outlined,
+      tone: selected ? HermesSemantic.green : HermesSemantic.gray,
+      title: name,
+      subtitle: description,
+      onTap: name.isEmpty ? null : () => _configureProvider(provider),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (selected)
+            HermesStatusChip(
+              color: HermesSemantic.green,
+              label: context.l10n.memoryInUse,
+            )
+          else if (configured)
+            HermesStatusChip(
+              color: HermesSemantic.blue,
+              label: context.l10n.memoryConfigured,
+            ),
+          IconButton(
+            tooltip: context.l10n.memoryConfigureProvider(name),
+            onPressed: name.isEmpty ? null : () => _configureProvider(provider),
+            icon: const Icon(Icons.tune, size: 19),
+          ),
+          if (!selected)
+            IconButton(
+              tooltip: context.l10n.memoryEnableProvider(name),
+              onPressed: _busy || !available
+                  ? null
+                  : () => _selectProvider(name),
+              icon: const Icon(Icons.check_circle_outline, size: 19),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _curatorCard() {
+    final curator = _curator;
+    if (curator == null) {
+      return HermesGlassCard(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          children: [
+            const Icon(Icons.auto_fix_high_outlined),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                _curatorError == null
+                    ? context.l10n.memoryCuratorLoading
+                    : context.l10n.memoryCuratorUnavailable,
+              ),
+            ),
+            if (_curatorError != null)
+              IconButton(
+                tooltip: _curatorError,
+                onPressed: _load,
+                icon: const Icon(Icons.refresh),
+              ),
+          ],
+        ),
+      );
+    }
+    final enabled = curator['enabled'] == true;
+    final paused = curator['paused'] == true;
+    final interval = curator['interval_hours'];
+    final lastRun = curator['last_run_at']?.toString();
+    return HermesGlassCard(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(Icons.auto_fix_high_outlined),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  context.l10n.memoryCuratorTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+              HermesStatusChip(
+                color: !enabled || paused
+                    ? HermesSemantic.gray
+                    : HermesSemantic.green,
+                label: !enabled
+                    ? context.l10n.memoryDisabled
+                    : paused
+                    ? context.l10n.memoryPaused
+                    : context.l10n.commonRunning,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Text(
+            [
+              if (interval != null)
+                context.l10n.memoryCuratorInterval('$interval'),
+              if (lastRun != null && lastRun.isNotEmpty)
+                context.l10n.memoryCuratorLastRun(lastRun),
+            ].join(' · '),
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _busy || !enabled
+                      ? null
+                      : () => _setCuratorPaused(!paused),
+                  icon: Icon(paused ? Icons.play_arrow : Icons.pause),
+                  label: Text(
+                    paused
+                        ? context.l10n.memoryResume
+                        : context.l10n.memoryPause,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: FilledButton.icon(
+                  onPressed: _busy || !enabled ? null : _runCurator,
+                  icon: const Icon(Icons.bolt),
+                  label: Text(context.l10n.memoryRunNow),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    disposeConnectionObserver();
+    _scope?.removeListener(_onScopeChanged);
+    super.dispose();
+  }
+}
+
+class _MemoryProviderSheet extends StatefulWidget {
+  final ApiClient api;
+  final String provider;
+  final Map<String, dynamic> providerInfo;
+  final String? profile;
+
+  const _MemoryProviderSheet({
+    required this.api,
+    required this.provider,
+    required this.providerInfo,
+    required this.profile,
+  });
+
+  @override
+  State<_MemoryProviderSheet> createState() => _MemoryProviderSheetState();
+}
+
+class _MemoryProviderSheetState extends State<_MemoryProviderSheet>
+    with ConnectionReloadMixin<_MemoryProviderSheet> {
+  Map<String, dynamic>? _config;
+  Map<String, dynamic>? _oauth;
+  final Map<String, TextEditingController> _controllers = {};
+  String? _configError;
+  String? _oauthError;
+  bool _oauthSupported = false;
+  bool _saving = false;
+  bool _setupBusy = false;
+  List<Map<String, dynamic>>? _setupResults;
+  Map<String, dynamic>? _setupOverride;
+  bool _pollInFlight = false;
+  Timer? _poller;
+  DateTime? _pollDeadline;
+  ProfileScopeStore? _scopeStore;
+  int _loadGeneration = 0;
+
+  bool _ownsTarget() {
+    return mounted &&
+        identical(widget.api, context.read<ConnectionStore>().api) &&
+        widget.profile == context.read<ProfileScopeStore>().override;
+  }
+
+  void _requireTarget() {
+    requireActiveApi(context, context.read<ConnectionStore>(), widget.api);
+    if (widget.profile != context.read<ProfileScopeStore>().override) {
+      throw StateError(context.l10n.backendDisconnected);
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    unawaited(_load());
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    observeConnection(context.read<ConnectionStore>(), _handleTargetChange);
+    final scope = context.read<ProfileScopeStore>();
+    if (identical(scope, _scopeStore)) return;
+    _scopeStore?.removeListener(_handleTargetChange);
+    _scopeStore = scope..addListener(_handleTargetChange);
+  }
+
+  void _handleTargetChange() {
+    if (!mounted) return;
+    ++_loadGeneration;
+    _poller?.cancel();
+    if (_ownsTarget()) {
+      unawaited(_load());
+      return;
+    }
+    for (final controller in _controllers.values) {
+      controller.dispose();
+    }
+    _controllers.clear();
+    setState(() {
+      _config = null;
+      _oauth = null;
+      _saving = false;
+      _setupBusy = false;
+      _setupResults = null;
+      _setupOverride = null;
+      _configError = context.l10n.backendDisconnected;
+      _oauthError = null;
+    });
+  }
+
+  Future<void> _load() async {
+    if (!_ownsTarget()) return;
+    final generation = ++_loadGeneration;
+    try {
+      final config = await widget.api.memoryProviderConfig(
+        widget.provider,
+        profile: widget.profile,
+      );
+      if (_ownsTarget() && generation == _loadGeneration) {
+        for (final controller in _controllers.values) {
+          controller.dispose();
+        }
+        _controllers.clear();
+        for (final field
+            in (config['fields'] as List? ?? const []).whereType<Map>()) {
+          final key = field['key']?.toString() ?? '';
+          if (key.isEmpty) continue;
+          final secret = field['kind'] == 'secret';
+          _controllers[key] = TextEditingController(
+            text: secret ? '' : field['value']?.toString() ?? '',
+          );
+        }
+        setState(() {
+          _config = config;
+          _configError = null;
+        });
+      }
+    } catch (error) {
+      if (_ownsTarget() && generation == _loadGeneration) {
+        setState(() => _configError = '$error');
+      }
+    }
+    try {
+      final oauth = await widget.api.memoryProviderOAuthStatus(
+        widget.provider,
+        profile: widget.profile,
+      );
+      if (!_ownsTarget() || generation != _loadGeneration) return;
+      setState(() {
+        _oauth = oauth;
+        _oauthSupported = true;
+        _oauthError = null;
+      });
+      if (oauth['state'] == 'pending') _startPolling();
+    } on ApiException catch (error) {
+      if (!_ownsTarget() || generation != _loadGeneration) return;
+      setState(() {
+        _oauthSupported = error.statusCode != 404;
+        _oauthError = error.statusCode == 404 ? null : '$error';
+      });
+    } catch (error) {
+      if (_ownsTarget() && generation == _loadGeneration) {
+        setState(() => _oauthError = '$error');
+      }
+    }
+  }
+
+  List<Map<String, dynamic>> get _fields =>
+      (_config?['fields'] as List? ?? const [])
+          .whereType<Map>()
+          .map((value) => value.cast<String, dynamic>())
+          .toList();
+
+  Map<String, dynamic> get _formValues => {
+    for (final field in _fields)
+      if ((field['key']?.toString() ?? '').isNotEmpty)
+        field['key'].toString(): _fieldValue(field),
+  };
+
+  bool _isVisible(Map<String, dynamic> field) {
+    final when = field['when'];
+    if (when is! Map || when.isEmpty) return true;
+    final values = _formValues;
+    return when.entries.every(
+      (entry) => '${values[entry.key.toString()] ?? ''}' == '${entry.value}',
+    );
+  }
+
+  Object? _fieldValue(Map<String, dynamic> field) {
+    final key = field['key']?.toString() ?? '';
+    final raw = _controllers[key]?.text ?? '';
+    switch (field['kind']?.toString()) {
+      case 'bool':
+      case 'boolean':
+        return raw == 'true';
+      case 'integer':
+        return int.tryParse(raw.trim()) ?? raw.trim();
+      case 'number':
+        return num.tryParse(raw.trim()) ?? raw.trim();
+      case 'json':
+        if (raw.trim().isEmpty) return '';
+        try {
+          return jsonDecode(raw);
+        } catch (_) {
+          // Keep partially edited JSON renderable. [_save] performs the
+          // authoritative validation before anything reaches the server.
+          return raw;
+        }
+      default:
+        return raw;
+    }
+  }
+
+  Future<void> _save() async {
+    if (!_ownsTarget()) return;
+    final values = <String, Object?>{};
+    for (final field in _fields) {
+      if (!_isVisible(field)) continue;
+      final key = field['key']?.toString() ?? '';
+      final value = _controllers[key]?.text ?? '';
+      if (field['kind'] == 'secret' && value.trim().isEmpty) continue;
+      if (field['kind'] == 'json' && value.trim().isNotEmpty) {
+        try {
+          jsonDecode(value);
+        } catch (_) {
+          showHermesToast(
+            context,
+            message: context.l10n.memoryInvalidJson('${field['label'] ?? key}'),
+            kind: HermesToastKind.error,
+          );
+          return;
+        }
+      }
+      if ((field['kind'] == 'integer' || field['kind'] == 'number') &&
+          value.trim().isNotEmpty &&
+          num.tryParse(value.trim()) == null) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryInvalidNumber('${field['label'] ?? key}'),
+          kind: HermesToastKind.error,
+        );
+        return;
+      }
+      values[key] = _fieldValue(field);
+    }
+    setState(() => _saving = true);
+    try {
+      _requireTarget();
+      await widget.api.saveMemoryProviderConfig(
+        widget.provider,
+        values,
+        profile: widget.profile,
+        surface: _config?['_surface']?.toString(),
+      );
+      _requireTarget();
+      if (!mounted) return;
+      showHermesToast(
+        context,
+        message: context.l10n.memoryProviderSaved,
+        kind: HermesToastKind.success,
+      );
+      Navigator.pop(context, true);
+    } catch (error) {
+      if (mounted && _ownsTarget()) {
+        showHermesToast(
+          context,
+          message: context.l10n.memoryProviderSaveFailed('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (_ownsTarget()) setState(() => _saving = false);
+    }
+  }
+
+  Map<String, dynamic> get _setup =>
+      _setupOverride ??
+      (widget.providerInfo['setup'] as Map?)?.cast<String, dynamic>() ??
+      (_config?['setup'] as Map?)?.cast<String, dynamic>() ??
+      const {};
+
+  bool get _hasSetupDetails =>
+      (_setup['pip_dependencies'] as List? ?? const []).isNotEmpty ||
+      (_setup['external_dependencies'] as List? ?? const []).isNotEmpty ||
+      (_setup['required_env'] as List? ?? const []).isNotEmpty;
+
+  bool get _needsSetup =>
+      _hasSetupDetails && _setup['dependencies_installed'] != true;
+
+  Future<void> _runSetup() async {
+    if (!_ownsTarget()) return;
+    setState(() {
+      _setupBusy = true;
+      _setupResults = null;
+    });
+    try {
+      _requireTarget();
+      final result = await widget.api.setupMemoryProvider(
+        widget.provider,
+        profile: widget.profile,
+      );
+      _requireTarget();
+      if (!mounted) return;
+      final rows = (result['results'] as List? ?? const [])
+          .whereType<Map>()
+          .map((row) => row.cast<String, dynamic>())
+          .toList();
+      final status = result['status'];
+      setState(() {
+        _setupResults = rows;
+        if (status is Map && status['setup'] is Map) {
+          _setupOverride = (status['setup'] as Map).cast<String, dynamic>();
+        }
+      });
+      final failed = rows.any((row) => row['status'] == 'failed');
+      showHermesToast(
+        context,
+        message: failed
+            ? context.l10n.memorySetupFailed
+            : context.l10n.memorySetupFinished,
+        kind: failed ? HermesToastKind.error : HermesToastKind.success,
+      );
+      if (!failed) await _load();
+    } catch (error) {
+      if (mounted && _ownsTarget()) {
+        showHermesToast(
+          context,
+          message: context.l10n.memorySetupError('$error'),
+          kind: HermesToastKind.error,
+        );
+      }
+    } finally {
+      if (_ownsTarget()) setState(() => _setupBusy = false);
+    }
+  }
+
+  Future<void> _connect() async {
+    if (!_ownsTarget()) return;
+    setState(() {
+      _saving = true;
+      _oauthError = null;
+    });
+    try {
+      _requireTarget();
+      final result = await widget.api.startMemoryProviderOAuth(
+        widget.provider,
+        profile: widget.profile,
+      );
+      _requireTarget();
+      if (!mounted) return;
+      setState(() => _oauth = result);
+      final rawUrl =
+          result['authorization_url'] ??
+          result['verification_url'] ??
+          result['url'];
+      final uri = Uri.tryParse(rawUrl?.toString() ?? '');
+      if (uri != null && uri.hasScheme) {
+        if (!await launchExternalOrNotify(context, uri)) return;
+      }
+      if (!_ownsTarget()) return;
+      _startPolling();
+    } catch (error) {
+      if (_ownsTarget()) setState(() => _oauthError = '$error');
+    } finally {
+      if (_ownsTarget()) setState(() => _saving = false);
+    }
+  }
+
+  void _startPolling() {
+    _pollDeadline = DateTime.now().add(const Duration(minutes: 2));
+    _poller?.cancel();
+    _poller = Timer.periodic(
+      const Duration(milliseconds: 1500),
+      (_) => unawaited(_pollOAuth()),
+    );
+  }
+
+  Future<void> _pollOAuth() async {
+    if (_pollInFlight || !_ownsTarget()) return;
+    if (DateTime.now().isAfter(_pollDeadline ?? DateTime.now())) {
+      _poller?.cancel();
+      if (mounted) {
+        setState(() => _oauthError = context.l10n.memoryOAuthTimeout);
+      }
+      return;
+    }
+    _pollInFlight = true;
+    try {
+      final next = await widget.api.memoryProviderOAuthStatus(
+        widget.provider,
+        profile: widget.profile,
+      );
+      if (!_ownsTarget()) return;
+      setState(() => _oauth = next);
+      if (next['state'] != 'pending') _poller?.cancel();
+    } catch (error) {
+      if (_ownsTarget()) setState(() => _oauthError = '$error');
+    } finally {
+      _pollInFlight = false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final config = _config;
+    return DraggableScrollableSheet(
+      expand: false,
+      initialChildSize: 0.78,
+      minChildSize: 0.45,
+      maxChildSize: 0.95,
+      builder: (context, scrollController) => Column(
+        children: [
+          ListTile(
+            title: Text(config?['label']?.toString() ?? widget.provider),
+            subtitle: widget.profile == null
+                ? Text(context.l10n.memoryCurrentProfile)
+                : Text(context.l10n.memoryProfile(widget.profile!)),
+            trailing: IconButton(
+              tooltip: context.l10n.commonClose,
+              onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.close),
+            ),
+          ),
+          const Divider(height: 1),
+          Expanded(
+            child: config == null && _configError == null
+                ? HermesLoadingState(
+                    label: context.l10n.memoryProviderConfigLoading,
+                  )
+                : ListView(
+                    controller: scrollController,
+                    padding: const EdgeInsets.all(16),
+                    children: [
+                      if (_configError != null)
+                        HermesErrorState(
+                          description: _configError,
+                          onRetry: _load,
+                        ),
+                      if (_needsSetup || _setupResults != null) _setupCard(),
+                      if (_needsSetup || _setupResults != null)
+                        const SizedBox(height: 16),
+                      if (_oauthSupported) _oauthCard(),
+                      if (_oauthSupported) const SizedBox(height: 16),
+                      ..._fieldGroups(),
+                      if (_fields.isEmpty && _configError == null)
+                        HermesEmptyState(
+                          icon: Icons.tune,
+                          title: context.l10n.memoryNoProviderConfig,
+                        ),
+                      if ((config?['docs_url']?.toString() ?? '').isNotEmpty)
+                        TextButton.icon(
+                          onPressed: () {
+                            final uri = Uri.tryParse(
+                              config!['docs_url'].toString(),
+                            );
+                            if (uri != null) {
+                              unawaited(launchExternalOrNotify(context, uri));
+                            }
+                          },
+                          icon: const Icon(Icons.open_in_new),
+                          label: Text(context.l10n.memoryViewProviderDocs),
+                        ),
+                    ],
+                  ),
+          ),
+          if (_fields.isNotEmpty)
+            SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: FilledButton.icon(
+                    onPressed: _saving ? null : _save,
+                    icon: const Icon(Icons.save_outlined),
+                    label: Text(
+                      _saving
+                          ? context.l10n.memorySaving
+                          : context.l10n.memorySaveConfig,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _oauthCard() {
+    final oauth = _oauth;
+    final connected = oauth?['connected'] == true;
+    final state = oauth?['state']?.toString() ?? 'idle';
+    final detail = oauth?['detail']?.toString() ?? '';
+    return HermesGlassCard(
+      padding: const EdgeInsets.all(14),
+      child: Row(
+        children: [
+          Icon(
+            connected ? Icons.verified_user_outlined : Icons.link,
+            color: connected ? HermesSemantic.green : null,
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  connected
+                      ? context.l10n.memoryAccountConnected
+                      : context.l10n.memoryConnectAccount,
+                ),
+                if (_oauthError != null)
+                  Text(
+                    _oauthError!,
+                    style: const TextStyle(color: HermesSemantic.red),
+                  )
+                else if (detail.isNotEmpty)
+                  Text(detail, style: Theme.of(context).textTheme.bodySmall),
+              ],
+            ),
+          ),
+          if (state == 'pending')
+            const SizedBox.square(
+              dimension: 22,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            )
+          else
+            TextButton(
+              onPressed: _saving ? null : _connect,
+              child: Text(
+                connected
+                    ? context.l10n.memoryReconnect
+                    : context.l10n.memoryConnect,
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  List<Widget> _fieldGroups() {
+    final visible = _fields.where(_isVisible).toList();
+    final groups = <String, List<Map<String, dynamic>>>{};
+    for (final field in visible) {
+      (groups[field['group']?.toString() ?? ''] ??= []).add(field);
+    }
+    return [
+      for (final entry in groups.entries) ...[
+        if (entry.key.isNotEmpty) ...[
+          HermesSectionHeader(title: entry.key),
+          const SizedBox(height: 8),
+        ],
+        for (final field in entry.value) ...[
+          _fieldControl(field),
+          const SizedBox(height: 14),
+        ],
+      ],
+    ];
+  }
+
+  Widget _setupCard() {
+    final pip = (_setup['pip_dependencies'] as List? ?? const [])
+        .map((value) => value.toString())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    final requiredEnv = (_setup['required_env'] as List? ?? const [])
+        .map((value) => value.toString())
+        .where((value) => value.isNotEmpty)
+        .toList();
+    final external = (_setup['external_dependencies'] as List? ?? const [])
+        .whereType<Map>();
+    return HermesGlassCard(
+      padding: const EdgeInsets.all(14),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            context.l10n.memoryProviderSetup,
+            style: const TextStyle(fontWeight: FontWeight.w700),
+          ),
+          const SizedBox(height: 6),
+          Text(context.l10n.memoryProviderSetupDescription),
+          if (pip.isNotEmpty) ...[
+            const SizedBox(height: 10),
+            Text('${context.l10n.memoryPythonDependencies}: ${pip.join(', ')}'),
+          ],
+          for (final dependency in external) ...[
+            const SizedBox(height: 8),
+            SelectableText(
+              [dependency['name'], dependency['install']]
+                  .where((value) => (value?.toString() ?? '').isNotEmpty)
+                  .join(': '),
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ],
+          if (requiredEnv.isNotEmpty) ...[
+            const SizedBox(height: 8),
+            Text(
+              '${context.l10n.memoryRequiredEnvironment}: ${requiredEnv.join(', ')}',
+            ),
+          ],
+          if (_setupResults != null) ...[
+            const SizedBox(height: 10),
+            for (final result in _setupResults!)
+              Text(
+                '${result['name'] ?? result['kind'] ?? ''}: ${result['status'] ?? ''}',
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+          ],
+          if (_needsSetup) ...[
+            const SizedBox(height: 12),
+            FilledButton.icon(
+              onPressed: _setupBusy ? null : _runSetup,
+              icon: _setupBusy
+                  ? const SizedBox.square(
+                      dimension: 16,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
+                  : const Icon(Icons.download_outlined),
+              label: Text(
+                _setupBusy
+                    ? context.l10n.memoryInstallingDependencies
+                    : context.l10n.memoryInstallDependencies,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _fieldControl(Map<String, dynamic> field) {
+    final key = field['key']?.toString() ?? '';
+    final kind = field['kind']?.toString() ?? 'text';
+    final label = field['label']?.toString() ?? key;
+    final description = field['description']?.toString() ?? '';
+    final info = field['info']?.toString() ?? '';
+    final help = [
+      description,
+      info,
+    ].where((value) => value.isNotEmpty).join('\n');
+    final displayLabel = field['required'] == true ? '$label *' : label;
+    final controller = _controllers.putIfAbsent(key, TextEditingController.new);
+    if (kind == 'bool' || kind == 'boolean') {
+      return SwitchListTile(
+        contentPadding: EdgeInsets.zero,
+        title: Text(displayLabel),
+        subtitle: help.isEmpty ? null : Text(help),
+        value: controller.text == 'true',
+        onChanged: (value) => setState(() => controller.text = '$value'),
+      );
+    }
+    if (kind == 'select') {
+      final options = (field['options'] as List? ?? const [])
+          .whereType<Map>()
+          .map((value) => value.cast<String, dynamic>())
+          .toList();
+      final values = options
+          .map((option) => option['value']?.toString() ?? '')
+          .toSet();
+      final selectedDescription = options
+          .where((option) => option['value']?.toString() == controller.text)
+          .map((option) => option['description']?.toString() ?? '')
+          .where((value) => value.isNotEmpty)
+          .firstOrNull;
+      final selectHelp = [
+        help,
+        selectedDescription ?? '',
+      ].where((value) => value.isNotEmpty).join('\n');
+      return DropdownButtonFormField<String>(
+        dropdownColor: hermesDropdownColor(context),
+        borderRadius: hermesDropdownBorderRadius,
+        initialValue: values.contains(controller.text) ? controller.text : null,
+        decoration: InputDecoration(
+          labelText: displayLabel,
+          helperText: selectHelp.isEmpty ? null : selectHelp,
+        ),
+        items: [
+          for (final option in options)
+            DropdownMenuItem(
+              value: option['value']?.toString() ?? '',
+              child: Text(option['label']?.toString() ?? ''),
+            ),
+        ],
+        onChanged: (value) => setState(() => controller.text = value ?? ''),
+      );
+    }
+    return TextField(
+      controller: controller,
+      obscureText: kind == 'secret',
+      keyboardType: kind == 'number' || kind == 'integer'
+          ? TextInputType.numberWithOptions(
+              decimal: kind == 'number',
+              signed: true,
+            )
+          : TextInputType.text,
+      minLines: kind == 'json' ? 3 : 1,
+      maxLines: kind == 'json' ? 8 : 1,
+      decoration: InputDecoration(
+        labelText: displayLabel,
+        helperText: help.isEmpty ? null : help,
+        hintText: kind == 'secret' && field['is_set'] == true
+            ? context.l10n.memoryKeepSecretHint
+            : field['placeholder']?.toString(),
+        suffixIcon: (field['url']?.toString() ?? '').isEmpty
+            ? null
+            : IconButton(
+                tooltip: context.l10n.memoryViewProviderDocs,
+                onPressed: () {
+                  final uri = Uri.tryParse(field['url'].toString());
+                  if (uri != null) {
+                    unawaited(launchExternalOrNotify(context, uri));
+                  }
+                },
+                icon: const Icon(Icons.open_in_new, size: 18),
+              ),
+      ),
+    );
+  }
+
+  @override
+  void dispose() {
+    ++_loadGeneration;
+    disposeConnectionObserver();
+    _scopeStore?.removeListener(_handleTargetChange);
+    _poller?.cancel();
+    for (final controller in _controllers.values) {
+      controller.dispose();
+    }
+    super.dispose();
+  }
+}
