@@ -9,6 +9,13 @@
 
 # JARVIS Changelog
 
+## 0.3.2 — Test Contract Alignment
+
+- Fixed stale Flutter test references to the old `Hermes` product title; shell assertions now use `JarvisConfig.productName`.
+- Updated the Agent screen scroll contract test to match the current `HermesPageScaffold` + `RefreshIndicator` + `ListView` implementation instead of the retired `NestedScrollView`/`SliverAppBar` structure.
+- Kept Liquid golden tests enabled; no golden assertion was disabled or weakened.
+- Added an explicit manual GitHub Actions `update_goldens` workflow input that regenerates the four Liquid preview baselines with Flutter 3.47.1 and commits only the changed preview goldens.
+
 ## 0.2.1 — UI/Identity Core
 
 - Continued the independent JARVIS product layer on top of Hermes Mobile.

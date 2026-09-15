@@ -38,6 +38,7 @@ import 'package:jarvis/kanban/api.dart';
 import 'package:jarvis/kanban/models.dart';
 import 'package:jarvis/kanban/store.dart';
 import 'package:jarvis/core/stores/bot_store.dart';
+import 'package:jarvis/core/jarvis/jarvis_config.dart';
 import 'package:jarvis/core/connections/connection_registry.dart';
 import 'package:jarvis/theme/hermes_theme.dart';
 import 'package:jarvis/theme/hermes_tokens.dart';
@@ -905,7 +906,7 @@ void main() {
       expect(tester.getSize(button).width, greaterThanOrEqualTo(44));
       expect(tester.getSize(button).height, greaterThanOrEqualTo(44));
     }
-    expect(find.text('Hermes').hitTestable(), findsOneWidget);
+    expect(find.text(JarvisConfig.productName).hitTestable(), findsOneWidget);
     final phoneNavigation = find.byKey(
       const ValueKey('app-shell-phone-navigation'),
     );
@@ -923,7 +924,7 @@ void main() {
     final refresh = find.byType(RefreshIndicator).first;
     await tester.drag(refresh, const Offset(0, -350));
     await tester.pumpAndSettle();
-    expect(find.text('Hermes').hitTestable(), findsOneWidget);
+    expect(find.text(JarvisConfig.productName).hitTestable(), findsOneWidget);
     expect(
       find.byKey(const ValueKey('home-settings-avatar')).hitTestable(),
       findsOneWidget,
