@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/text_chunks.dart';
+import 'package:jarvis/chat/content/text_chunks.dart';
 
 void main() {
   test('chunks preserve text, newlines and surrogate pairs at every boundary', () {

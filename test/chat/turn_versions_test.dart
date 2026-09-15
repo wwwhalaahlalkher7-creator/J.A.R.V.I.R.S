@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
 
 ChatMessage _m(String id, String role, String text, {int? rowId}) =>
     ChatMessage(id: id, role: role, parts: [ChatPart.text(text)], rowId: rowId);

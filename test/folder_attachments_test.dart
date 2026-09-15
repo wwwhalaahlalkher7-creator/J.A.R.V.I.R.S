@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/folder_attachments.dart';
+import 'package:jarvis/core/folder_attachments.dart';
 
 void main() {
   test('shouldSkipDirName skips hidden and bulky trees', () {

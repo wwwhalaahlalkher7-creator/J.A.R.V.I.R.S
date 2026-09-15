@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/screens/chat_screen.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/screens/chat_screen.dart';
 
 void main() {
   for (final width in [840.0, 1200.0]) {

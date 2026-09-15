@@ -1,5 +1,5 @@
 import 'package:flutter/foundation.dart';
-import 'package:hermes_mobile/core/performance_metrics.dart';
+import 'package:jarvis/core/performance_metrics.dart';
 
 /// Evidence metadata; pure-computation benchmarks are not device UI timings.
 Map<String, dynamic> performanceEvidence(ClientPerformanceMetrics metrics) {

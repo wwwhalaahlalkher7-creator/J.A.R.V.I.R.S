@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/session_tree.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/session_tree.dart';
 
 void main() {
   final rows = [

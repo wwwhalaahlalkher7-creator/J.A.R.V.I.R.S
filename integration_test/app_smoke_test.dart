@@ -4,10 +4,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/main.dart';
-import 'package:hermes_mobile/screens/chat_screen.dart';
-import 'package:hermes_mobile/screens/connect_screen.dart';
-import 'package:hermes_mobile/screens/new_session_screen.dart';
+import 'package:jarvis/main.dart';
+import 'package:jarvis/screens/chat_screen.dart';
+import 'package:jarvis/screens/connect_screen.dart';
+import 'package:jarvis/screens/new_session_screen.dart';
 import 'package:integration_test/integration_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -19,7 +19,7 @@ void main() {
     final backend = await _FakeHermesBackend.start();
     addTearDown(backend.close);
 
-    await tester.pumpWidget(const HermesMobileApp());
+    await tester.pumpWidget(const JarvisApp());
     await _pumpUntil(tester, find.byKey(const ValueKey('connect-server-url')));
 
     await tester.enterText(

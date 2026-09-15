@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/widgets/mobile/hermes_mobile_surfaces.dart';
+import 'package:jarvis/widgets/mobile/hermes_mobile_surfaces.dart';
 
 void main() {
   for (final scale in [1.0, 2.0]) {

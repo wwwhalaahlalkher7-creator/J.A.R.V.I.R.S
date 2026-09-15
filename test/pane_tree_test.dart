@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/pane_tree.dart';
+import 'package:jarvis/core/pane_tree.dart';
 
 void main() {
   test('pane tree inserts tabs and edge splits then normalizes on close', () {

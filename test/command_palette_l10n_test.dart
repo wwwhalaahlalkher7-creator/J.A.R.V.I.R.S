@@ -1,12 +1,12 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/command_palette_store.dart';
-import 'package:hermes_mobile/core/stores/command_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_ar.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_en.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/command_palette_store.dart';
+import 'package:jarvis/core/stores/command_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations_ar.dart';
+import 'package:jarvis/l10n/generated/app_localizations_en.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/widgets/session/project_dialog.dart';
+import 'package:jarvis/widgets/session/project_dialog.dart';
 
 void main() {
   group('desktop-compatible session move targets', () {

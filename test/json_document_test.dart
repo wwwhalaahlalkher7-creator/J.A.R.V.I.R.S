@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/json_document.dart';
+import 'package:jarvis/core/json_document.dart';
 
 void main() {
   test('formats and reads nested JSON without changing the source', () {

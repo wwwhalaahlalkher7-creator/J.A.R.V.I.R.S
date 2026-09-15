@@ -1,19 +1,19 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hermes_mobile/widgets/bot_avatar.dart';
+import 'package:jarvis/widgets/bot_avatar.dart';
 import 'package:flutter_test/flutter_test.dart';
 // ignore: depend_on_referenced_packages
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/core/stores/bot_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/screens/bot_avatar_editor_screen.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:jarvis/core/stores/bot_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/screens/bot_avatar_editor_screen.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
 import 'support/review_capture.dart';
 
 class _Bots extends BotStore {

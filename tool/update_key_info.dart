@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:hermes_mobile/core/update_manifest_crypto.dart';
+import 'package:jarvis/core/update_manifest_crypto.dart';
 
 Future<void> main() async {
   final privateKey =

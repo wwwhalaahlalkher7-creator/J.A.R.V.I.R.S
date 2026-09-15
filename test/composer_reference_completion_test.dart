@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/composer_reference_completion.dart';
-import 'package:hermes_mobile/core/models.dart';
+import 'package:jarvis/core/composer_reference_completion.dart';
+import 'package:jarvis/core/models.dart';
 
 void main() {
   test('typed starter taxonomy matches desktop contract', () {

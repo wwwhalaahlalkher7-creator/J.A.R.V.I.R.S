@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/structured_composer_controller.dart';
+import 'package:jarvis/core/structured_composer_controller.dart';
 
 void main() {
   test('structured references keep native editable offsets', () {

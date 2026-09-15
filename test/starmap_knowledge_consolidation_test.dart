@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
+import 'package:jarvis/core/api_client.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 

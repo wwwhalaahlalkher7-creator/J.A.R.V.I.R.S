@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/code_highlighter.dart';
+import 'package:jarvis/chat/content/code_highlighter.dart';
 
 void main() {
   setUp(() {

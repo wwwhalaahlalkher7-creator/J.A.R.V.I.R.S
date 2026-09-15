@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/performance_metrics.dart';
+import 'package:jarvis/core/performance_metrics.dart';
 
 void main() {
   test(

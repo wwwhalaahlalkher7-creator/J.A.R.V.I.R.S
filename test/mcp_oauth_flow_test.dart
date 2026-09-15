@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/mcp_oauth_flow.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/mcp_oauth_flow.dart';
 
 class _OAuthApi extends ApiClient {
   _OAuthApi() : super(baseUrl: 'http://oauth.invalid', apiKey: 'test');

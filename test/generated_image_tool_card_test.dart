@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 
 /// Regression coverage for a real broken session: `image_generate` returns
 /// `{"success": true, "image": "<url>", ...}`, but the generated-image tool

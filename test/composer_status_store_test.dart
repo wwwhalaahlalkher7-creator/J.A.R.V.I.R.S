@@ -1,12 +1,12 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/composer_status_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_en.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_zh.dart';
-import 'package:hermes_mobile/l10n/runtime_l10n.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/composer_status_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations_en.dart';
+import 'package:jarvis/l10n/generated/app_localizations_zh.dart';
+import 'package:jarvis/l10n/runtime_l10n.dart';
 
 class _FakeRpc implements ComposerStatusRpc {
   var listCalls = <String>[];

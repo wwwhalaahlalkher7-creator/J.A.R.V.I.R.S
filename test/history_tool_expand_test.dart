@@ -2,10 +2,10 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

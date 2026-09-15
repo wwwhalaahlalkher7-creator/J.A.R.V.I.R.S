@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/diff_view.dart';
+import 'package:jarvis/chat/content/diff_view.dart';
 
 void main() {
   test('diffLineStats ignores file headers', () {

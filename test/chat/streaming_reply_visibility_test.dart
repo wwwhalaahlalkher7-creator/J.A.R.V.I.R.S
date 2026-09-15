@@ -2,11 +2,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/chat/transcript/chat_message_list.dart';
-import 'package:hermes_mobile/chat/content/inline_content_renderer.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/chat/transcript/chat_message_list.dart';
+import 'package:jarvis/chat/content/inline_content_renderer.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
 
 void main() {
   for (final reduceMotion in [false, true]) {

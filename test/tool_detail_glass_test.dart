@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
-import 'package:hermes_mobile/chat/tools/tool_group_card.dart';
-import 'package:hermes_mobile/chat/tools/tool_dismiss_store.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:jarvis/chat/tools/tool_group_card.dart';
+import 'package:jarvis/chat/tools/tool_dismiss_store.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
 
 void main() {
   for (final reduced in [false, true]) {

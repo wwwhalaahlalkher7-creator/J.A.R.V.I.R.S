@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
 
 /// Weak-network regression: `GatewayClient`'s own in-flight request cap
 /// (`gatewayTooManyPendingCode`, gateway.dart) throws

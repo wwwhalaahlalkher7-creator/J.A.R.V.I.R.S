@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/sheets/workspace_picker_sheet.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
+import 'package:jarvis/chat/sheets/workspace_picker_sheet.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
 
 void main() {
   testWidgets('workspace selection uses shared Liquid rows and returns path', (

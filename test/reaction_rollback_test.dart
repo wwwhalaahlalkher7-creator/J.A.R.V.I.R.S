@@ -1,10 +1,10 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Gateway extends GatewayClient {

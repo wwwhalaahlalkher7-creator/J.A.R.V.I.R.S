@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/incoming_share.dart';
+import 'package:jarvis/core/incoming_share.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

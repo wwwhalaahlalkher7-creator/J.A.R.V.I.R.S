@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/session_refs.dart';
+import 'package:jarvis/core/session_refs.dart';
 
 void main() {
   test('session refs become internal links with resolved titles', () {

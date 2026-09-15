@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/starmap_share_code.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_zh.dart';
-import 'package:hermes_mobile/screens/starmap_screen.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/starmap_share_code.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/l10n/generated/app_localizations_zh.dart';
+import 'package:jarvis/screens/starmap_screen.dart';
 import 'package:provider/provider.dart';
 
 StarmapGraph _sampleGraph() => StarmapGraph(

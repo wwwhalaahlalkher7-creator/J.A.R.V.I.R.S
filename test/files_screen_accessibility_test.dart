@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/file_tree_store.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/screens/files_screen.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/file_tree_store.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/screens/files_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_alert_dialog.dart';
-import 'package:hermes_mobile/widgets/right_sidebar/file_tree_panel.dart';
-import 'package:hermes_mobile/widgets/glass/glass_search_field.dart';
-import 'package:hermes_mobile/widgets/glass/glass_button.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_alert_dialog.dart';
+import 'package:jarvis/widgets/right_sidebar/file_tree_panel.dart';
+import 'package:jarvis/widgets/glass/glass_search_field.dart';
+import 'package:jarvis/widgets/glass/glass_button.dart';
 
 class _AccessibleFilesApi extends ApiClient {
   _AccessibleFilesApi()

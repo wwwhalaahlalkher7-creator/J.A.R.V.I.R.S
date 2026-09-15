@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/widgets/session/session_list_meta.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/widgets/session/session_list_meta.dart';
 
 void main() {
   test('sessionLocationLabel uses cwd basename and git branch', () {

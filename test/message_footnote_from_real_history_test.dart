@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 
 /// End-to-end: a historical assistant message shaped exactly like this
 /// backend's real session data (float epoch-seconds timestamp, no

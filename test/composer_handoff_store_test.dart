@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/stores/composer_handoff_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/stores/composer_handoff_store.dart';
 
 void main() {
   test('text handoff remains isolated by owner and retains metadata', () {

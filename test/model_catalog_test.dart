@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/model_catalog.dart';
-import 'package:hermes_mobile/core/models.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/model_catalog.dart';
+import 'package:jarvis/core/models.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _RecordingApi extends ApiClient {

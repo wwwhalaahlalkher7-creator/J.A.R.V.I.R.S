@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/kanban/api.dart';
-import 'package:hermes_mobile/kanban/models.dart';
-import 'package:hermes_mobile/kanban/store.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/screens/kanban_task_detail_screen.dart';
+import 'package:jarvis/kanban/api.dart';
+import 'package:jarvis/kanban/models.dart';
+import 'package:jarvis/kanban/store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/screens/kanban_task_detail_screen.dart';
 
 void main() {
   testWidgets('detail sheet renders mobile sections', (tester) async {

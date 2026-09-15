@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/screens/files_screen.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/screens/files_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

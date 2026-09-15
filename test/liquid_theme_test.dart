@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/core/stores/appearance_store.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_surface.dart';
-import 'package:hermes_mobile/widgets/glass/glass_button.dart';
-import 'package:hermes_mobile/widgets/adaptive_form_dialog.dart';
-import 'package:hermes_mobile/widgets/mobile/mobile_page_scaffold.dart';
-import 'package:hermes_mobile/widgets/glass/glass_environment.dart';
+import 'package:jarvis/core/stores/appearance_store.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/widgets/glass/glass_surface.dart';
+import 'package:jarvis/widgets/glass/glass_button.dart';
+import 'package:jarvis/widgets/adaptive_form_dialog.dart';
+import 'package:jarvis/widgets/mobile/mobile_page_scaffold.dart';
+import 'package:jarvis/widgets/glass/glass_environment.dart';
 
 void main() {
   test('Liquid fallback modal contours stay opaque and continuous', () {

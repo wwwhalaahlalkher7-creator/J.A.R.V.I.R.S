@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/refresh_scheduler.dart';
+import 'package:jarvis/core/refresh_scheduler.dart';
 
 void main() {
   test('coalesces bursts into active plus one trailing refresh', () async {

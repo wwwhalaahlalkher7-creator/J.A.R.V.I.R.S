@@ -1,9 +1,9 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/chat_message_codec.dart';
-import 'package:hermes_mobile/core/inflight_turn_journal.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/chat_message_codec.dart';
+import 'package:jarvis/core/inflight_turn_journal.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> _writeSnapshot(

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/timeline/chat_timeline.dart';
-import 'package:hermes_mobile/chat/tools/tool_dismiss_store.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
+import 'package:jarvis/chat/timeline/chat_timeline.dart';
+import 'package:jarvis/chat/tools/tool_dismiss_store.dart';
+import 'package:jarvis/core/chat_message.dart';
 
 ChatPart tool(
   String id, {

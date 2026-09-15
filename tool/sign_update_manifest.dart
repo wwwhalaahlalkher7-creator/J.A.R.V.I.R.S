@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
-import 'package:hermes_mobile/core/update_manifest_crypto.dart';
-import 'package:hermes_mobile/core/update_manifest_schema.dart';
+import 'package:jarvis/core/update_manifest_crypto.dart';
+import 'package:jarvis/core/update_manifest_schema.dart';
 
 Future<void> main(List<String> args) async {
   try {

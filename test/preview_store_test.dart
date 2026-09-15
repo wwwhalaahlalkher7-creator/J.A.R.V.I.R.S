@@ -2,11 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/preview_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/preview_store.dart';
 
 class _TourConnection extends ConnectionStore {
   final controller = StreamController<RoutedGatewayEvent>.broadcast();

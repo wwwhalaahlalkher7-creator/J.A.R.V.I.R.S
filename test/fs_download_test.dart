@@ -4,8 +4,8 @@ library;
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/fs_download.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/fs_download.dart';
 
 class _FakeApi extends ApiClient {
   _FakeApi() : super(baseUrl: 'http://contract.invalid', apiKey: 'test');

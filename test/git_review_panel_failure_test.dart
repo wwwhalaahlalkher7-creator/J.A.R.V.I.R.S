@@ -2,10 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/widgets/right_sidebar/git_review_panel.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/widgets/right_sidebar/git_review_panel.dart';
 import 'package:provider/provider.dart';
 
 class _Connection extends ConnectionStore {

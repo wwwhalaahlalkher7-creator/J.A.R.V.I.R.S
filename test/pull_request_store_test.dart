@@ -2,12 +2,12 @@ import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/stores/pull_request_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/stores/pull_request_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/widgets/session/session_list_meta.dart';
+import 'package:jarvis/widgets/session/session_list_meta.dart';
 import 'package:provider/provider.dart';
 
 class _PrApi extends ApiClient {

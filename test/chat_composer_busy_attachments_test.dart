@@ -15,22 +15,22 @@ import 'package:flutter_test/flutter_test.dart';
 // file_selector exposes its test seam through this platform interface.
 // ignore: depend_on_referenced_packages
 import 'package:file_selector_platform_interface/file_selector_platform_interface.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/command_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
-import 'package:hermes_mobile/core/stores/session_tab_store.dart';
-import 'package:hermes_mobile/core/stores/voice_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/screens/chat_screen.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/h/hermes_composer.dart';
-import 'package:hermes_mobile/widgets/mobile/hermes_adaptive_menu.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/command_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
+import 'package:jarvis/core/stores/session_tab_store.dart';
+import 'package:jarvis/core/stores/voice_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/screens/chat_screen.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/h/hermes_composer.dart';
+import 'package:jarvis/widgets/mobile/hermes_adaptive_menu.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

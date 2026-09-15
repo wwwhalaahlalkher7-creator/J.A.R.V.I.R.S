@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/streaming_remend.dart';
+import 'package:jarvis/chat/content/streaming_remend.dart';
 
 void main() {
   test('repair matches fence character and length without touching code', () {

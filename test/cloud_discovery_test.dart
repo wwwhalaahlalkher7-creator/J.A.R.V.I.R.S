@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/cloud_discovery.dart';
+import 'package:jarvis/core/cloud_discovery.dart';
 
 void main() {
   test('cloud discovery parses agents and authoritative org', () {

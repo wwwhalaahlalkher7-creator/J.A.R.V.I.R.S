@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/mermaid_view.dart';
-import 'package:hermes_mobile/chat/content/pretty_links.dart';
-import 'package:hermes_mobile/widgets/h/hermes_thinking.dart';
+import 'package:jarvis/chat/content/mermaid_view.dart';
+import 'package:jarvis/chat/content/pretty_links.dart';
+import 'package:jarvis/widgets/h/hermes_thinking.dart';
 
 void main() {
   group('separateGluedReasoningBlocks (H6)', () {

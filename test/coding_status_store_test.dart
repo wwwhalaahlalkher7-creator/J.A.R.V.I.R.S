@@ -1,8 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/coding_status_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/coding_status_store.dart';
 
 class _GitApi extends ApiClient {
   _GitApi() : super(baseUrl: 'http://example.invalid', apiKey: 'test');

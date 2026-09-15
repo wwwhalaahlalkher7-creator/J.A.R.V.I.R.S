@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/preview_document.dart';
+import 'package:jarvis/core/preview_document.dart';
 
 void main() {
   test('infers renderable preview kinds', () {

@@ -1,14 +1,14 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/settings_store.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/settings_store.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _Api extends ApiClient {

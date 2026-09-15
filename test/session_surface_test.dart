@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/session_surface.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/session_surface.dart';
 
 void main() {
   test('unchanged revisions skip expensive message materialization', () {

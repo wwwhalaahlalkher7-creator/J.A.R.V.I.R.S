@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/artifact_registry.dart';
+import 'package:jarvis/core/artifact_registry.dart';
 
 void main() {
   test('identity includes session, kind, language and title', () {

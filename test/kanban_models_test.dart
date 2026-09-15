@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/kanban/models.dart';
+import 'package:jarvis/kanban/models.dart';
 
 void main() {
   test('parses all canonical columns and task metadata', () {

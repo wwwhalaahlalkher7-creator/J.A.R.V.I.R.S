@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/composer_draft_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/composer_draft_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

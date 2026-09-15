@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/transcript_window.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/transcript_window.dart';
 
 ChatMessage _message(int index, {bool heavy = false}) => ChatMessage(
   id: 'm$index',

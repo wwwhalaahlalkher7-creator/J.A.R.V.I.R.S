@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/screens/artifacts_screen.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/screens/artifacts_screen.dart';
 
 /// Desktop can download a gateway media artifact to disk
 /// (`downloadGatewayMediaFile`); mobile's detail screen previously only had

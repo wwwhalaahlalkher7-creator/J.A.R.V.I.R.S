@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/settings_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/screens/connect_screen.dart';
+import 'package:jarvis/core/settings_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/screens/connect_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

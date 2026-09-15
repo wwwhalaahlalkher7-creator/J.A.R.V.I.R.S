@@ -1,4 +1,4 @@
-import 'package:hermes_mobile/theme/hermes_tokens.dart';
+import 'package:jarvis/theme/hermes_tokens.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

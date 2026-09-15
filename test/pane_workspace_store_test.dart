@@ -1,9 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/pane_tree.dart';
-import 'package:hermes_mobile/core/plugin_contributions.dart';
-import 'package:hermes_mobile/core/stores/pane_workspace_store.dart';
-import 'package:hermes_mobile/core/stores/plugin_contribution_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/pane_tree.dart';
+import 'package:jarvis/core/plugin_contributions.dart';
+import 'package:jarvis/core/stores/pane_workspace_store.dart';
+import 'package:jarvis/core/stores/plugin_contribution_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

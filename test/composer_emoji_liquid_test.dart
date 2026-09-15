@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_button.dart';
-import 'package:hermes_mobile/widgets/glass/glass_action_group.dart';
-import 'package:hermes_mobile/widgets/glass/glass_surface.dart';
-import 'package:hermes_mobile/widgets/h/hermes_composer.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_button.dart';
+import 'package:jarvis/widgets/glass/glass_action_group.dart';
+import 'package:jarvis/widgets/glass/glass_surface.dart';
+import 'package:jarvis/widgets/h/hermes_composer.dart';
 
 void main() {
   for (final mode in ['animated', 'disabled', 'accessible']) {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/starmap_layout.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/starmap_layout.dart';
 
 int _ts(int year, int month, int day) =>
     DateTime.utc(year, month, day).millisecondsSinceEpoch ~/ 1000;

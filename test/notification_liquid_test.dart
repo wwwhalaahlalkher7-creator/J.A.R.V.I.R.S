@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/notification_store.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/screens/notification_screen.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_button.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/notification_store.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/screens/notification_screen.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_button.dart';
 
 void main() {
   testWidgets('Liquid notifications keep header and clear confirmation', (

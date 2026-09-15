@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/composer_suggestions.dart';
+import 'package:jarvis/core/composer_suggestions.dart';
 
 void main() {
   group('matchRecurrence', () {

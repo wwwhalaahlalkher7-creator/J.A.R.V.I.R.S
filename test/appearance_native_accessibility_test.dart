@@ -4,10 +4,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/core/stores/appearance_store.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_surface.dart';
+import 'package:jarvis/core/stores/appearance_store.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_surface.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

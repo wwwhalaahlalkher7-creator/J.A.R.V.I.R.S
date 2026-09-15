@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:flutter_markdown/flutter_markdown.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/zoomable_markdown_image.dart';
-import 'package:hermes_mobile/chat/transcript/anchored_history_list.dart';
+import 'package:jarvis/chat/content/zoomable_markdown_image.dart';
+import 'package:jarvis/chat/transcript/anchored_history_list.dart';
 
 class _ControlledImageStream extends ImageStreamCompleter {
   void complete(ui.Image image) => setImage(ImageInfo(image: image));

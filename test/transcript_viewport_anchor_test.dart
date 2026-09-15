@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/transcript/viewport_anchor.dart';
-import 'package:hermes_mobile/chat/transcript/transcript_scroll_controller.dart';
+import 'package:jarvis/chat/transcript/viewport_anchor.dart';
+import 'package:jarvis/chat/transcript/transcript_scroll_controller.dart';
 
 void main() {
   testWidgets('layout correction is not counted as reading motion', (

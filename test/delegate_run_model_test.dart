@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/tool_card_models.dart';
+import 'package:jarvis/core/tool_card_models.dart';
 
 void main() {
   group('DelegateRunModel.listFrom', () {

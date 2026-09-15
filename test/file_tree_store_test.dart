@@ -2,9 +2,9 @@
 library;
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/stores/file_tree_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/stores/file_tree_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _FakeApi extends ApiClient {

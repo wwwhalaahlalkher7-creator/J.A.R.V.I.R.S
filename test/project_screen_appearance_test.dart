@@ -2,11 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_zh.dart';
-import 'package:hermes_mobile/screens/project_screen.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/l10n/generated/app_localizations_zh.dart';
+import 'package:jarvis/screens/project_screen.dart';
 import 'package:provider/provider.dart';
 
 /// Desktop's project sidebar has a right-click/kebab menu for renaming,

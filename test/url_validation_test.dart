@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/url_validation.dart';
+import 'package:jarvis/core/url_validation.dart';
 
 void main() {
   test('accepts public http and https URLs', () {

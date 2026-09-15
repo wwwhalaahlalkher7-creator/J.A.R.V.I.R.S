@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/composer/background_process_sheet.dart';
-import 'package:hermes_mobile/core/stores/composer_status_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
+import 'package:jarvis/chat/composer/background_process_sheet.dart';
+import 'package:jarvis/core/stores/composer_status_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
 
 /// Tapping a background-process row in the composer status stack must open
 /// a viewer showing THAT process's own command/output/exit code — not a

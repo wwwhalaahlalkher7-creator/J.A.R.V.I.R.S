@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:hermes_mobile/core/server_path.dart';
+import 'package:jarvis/core/server_path.dart';
 
 void main() {
   group('ServerPath POSIX', () {

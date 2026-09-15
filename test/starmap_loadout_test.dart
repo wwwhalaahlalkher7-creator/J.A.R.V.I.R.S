@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/starmap_loadout.dart';
+import 'package:jarvis/core/starmap_loadout.dart';
 
 void main() {
   group('BitWriter/BitReader', () {

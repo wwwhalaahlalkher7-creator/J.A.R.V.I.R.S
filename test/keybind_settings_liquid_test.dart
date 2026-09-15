@@ -3,12 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/core/stores/keybind_store.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/screens/keybind_settings_screen.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_alert_dialog.dart';
+import 'package:jarvis/core/stores/keybind_store.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/screens/keybind_settings_screen.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/widgets/glass/glass_alert_dialog.dart';
 
 void main() {
   for (final liquid in [false, true]) {

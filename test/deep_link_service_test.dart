@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/deep_link_service.dart';
+import 'package:jarvis/core/deep_link_service.dart';
 
 String _config(Map<String, dynamic> value) =>
     base64Url.encode(utf8.encode(jsonEncode(value))).replaceAll('=', '');

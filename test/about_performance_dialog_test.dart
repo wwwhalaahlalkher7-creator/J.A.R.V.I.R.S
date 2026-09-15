@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/screens/about_screen.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_alert_dialog.dart';
-import 'package:hermes_mobile/core/performance_metrics.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/screens/about_screen.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_alert_dialog.dart';
+import 'package:jarvis/core/performance_metrics.dart';
 
 void main() {
   for (final style in HermesVisualStyle.values) {

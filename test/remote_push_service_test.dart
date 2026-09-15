@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/notifications_service.dart';
-import 'package:hermes_mobile/core/remote_push.dart';
-import 'package:hermes_mobile/core/settings_store.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/locale_store.dart';
-import 'package:hermes_mobile/core/stores/notification_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/notifications_service.dart';
+import 'package:jarvis/core/remote_push.dart';
+import 'package:jarvis/core/settings_store.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/locale_store.dart';
+import 'package:jarvis/core/stores/notification_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 import 'package:package_info_plus/package_info_plus.dart';

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_gateway_event_family.dart';
+import 'package:jarvis/core/chat_gateway_event_family.dart';
 
 void main() {
   test('gateway events are partitioned by state authority', () {

@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/model_catalog.dart';
+import 'package:jarvis/core/model_catalog.dart';
 
 void main() {
   test('model catalog retains free and discounted pricing metadata', () {

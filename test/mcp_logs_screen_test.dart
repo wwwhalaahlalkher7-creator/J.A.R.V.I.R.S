@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/screens/mcp_logs_screen.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/screens/mcp_logs_screen.dart';
 import 'package:provider/provider.dart';
 
 /// `McpLogsScreen` polls `getLogs` every 2s for as long as it's mounted —

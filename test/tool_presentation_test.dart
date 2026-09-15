@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/tool_presentation.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_ar.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_en.dart';
-import 'package:hermes_mobile/l10n/runtime_l10n.dart';
+import 'package:jarvis/core/tool_presentation.dart';
+import 'package:jarvis/l10n/generated/app_localizations_ar.dart';
+import 'package:jarvis/l10n/generated/app_localizations_en.dart';
+import 'package:jarvis/l10n/runtime_l10n.dart';
 
 void main() {
   setUp(() => RuntimeL10n.use(AppLocalizationsEn()));

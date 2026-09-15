@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/sheets/handoff_dialog.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
+import 'package:jarvis/chat/sheets/handoff_dialog.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
 
 void main() {
   for (final reduced in [false, true]) {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/stores/session_store.dart';
 
 void main() {
   test('MessagingPlatform parses the canonical Hermes handoff fields', () {

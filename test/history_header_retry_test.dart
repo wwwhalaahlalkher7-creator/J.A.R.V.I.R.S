@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/transcript/chat_message_list.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
+import 'package:jarvis/chat/transcript/chat_message_list.dart';
+import 'package:jarvis/l10n/l10n.dart';
 
 void main() {
   testWidgets('history retry delegates to the viewport-preserving owner', (

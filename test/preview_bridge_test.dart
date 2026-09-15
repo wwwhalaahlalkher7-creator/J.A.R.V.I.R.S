@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/preview_bridge.dart';
+import 'package:jarvis/core/preview_bridge.dart';
 
 void main() {
   group('preview bridge document', () {

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/session_composer_completion.dart';
-import 'package:hermes_mobile/core/models.dart';
+import 'package:jarvis/core/session_composer_completion.dart';
+import 'package:jarvis/core/models.dart';
 
 void main() {
   test('session completion searches title and preserves profile routing', () {

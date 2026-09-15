@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/mcp_import.dart';
+import 'package:jarvis/core/mcp_import.dart';
 
 void main() {
   group('parseMcpImport', () {

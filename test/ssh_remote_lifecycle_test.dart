@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/ssh_gateway_tunnel_io.dart';
+import 'package:jarvis/core/ssh_gateway_tunnel_io.dart';
 
 void main() {
   const ownership = '0123456789abcdef0123456789abcdef';

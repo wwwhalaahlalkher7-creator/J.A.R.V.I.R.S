@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/starmap_layout.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/screens/starmap_screen.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/starmap_layout.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/screens/starmap_screen.dart';
 import 'package:provider/provider.dart';
 
 /// Gap #4 from the desktop comparison: desktop's ring date labels are

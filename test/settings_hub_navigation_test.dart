@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/appearance_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/locale_store.dart';
-import 'package:hermes_mobile/core/stores/plugin_contribution_store.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/screens/settings_hub_screen.dart';
+import 'package:jarvis/core/stores/appearance_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/locale_store.dart';
+import 'package:jarvis/core/stores/plugin_contribution_store.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/screens/settings_hub_screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {

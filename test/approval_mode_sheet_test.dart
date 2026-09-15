@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/sheets/approval_mode_sheet.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_selection_row.dart';
+import 'package:jarvis/chat/sheets/approval_mode_sheet.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/widgets/glass/glass_selection_row.dart';
 
 void main() {
   for (final style in HermesVisualStyle.values) {

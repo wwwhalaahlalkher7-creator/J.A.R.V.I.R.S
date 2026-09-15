@@ -2,8 +2,8 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/widgets/bot_avatar.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/widgets/bot_avatar.dart';
 
 Widget host({bool reduce = false, bool accessible = false, String? image}) =>
     MaterialApp(

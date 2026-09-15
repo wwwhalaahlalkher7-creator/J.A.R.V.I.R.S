@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/streaming_word_drain.dart';
+import 'package:jarvis/chat/content/streaming_word_drain.dart';
 
 void main() {
   test('Chinese without spaces drains character by character', () {

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/core/settings_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/core/settings_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 

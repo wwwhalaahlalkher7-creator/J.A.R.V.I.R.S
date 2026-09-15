@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/config_patch.dart';
+import 'package:jarvis/core/config_patch.dart';
 
 void main() {
   test('configHasPath and configValueAt walk nested maps', () {

@@ -4,11 +4,11 @@ import 'dart:typed_data';
 
 import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/wake_audio_capture.dart';
-import 'package:hermes_mobile/core/stores/wake_word_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/wake_audio_capture.dart';
+import 'package:jarvis/core/stores/wake_word_store.dart';
 
 class _FakeWakeCapture implements WakeAudioCapture {
   void Function(Uint8List bytes)? onData;

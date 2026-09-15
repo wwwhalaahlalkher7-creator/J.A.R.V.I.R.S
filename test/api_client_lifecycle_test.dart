@@ -3,9 +3,9 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/upload_cancellation.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/upload_cancellation.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
 import 'package:http/http.dart' as http;
 
 class _HangingClient extends http.BaseClient {

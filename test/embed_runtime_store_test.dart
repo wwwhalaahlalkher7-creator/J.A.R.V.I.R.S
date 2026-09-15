@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/embed_runtime_store.dart';
+import 'package:jarvis/core/stores/embed_runtime_store.dart';
 
 void main() {
   test('limits live players and releases capacity', () {

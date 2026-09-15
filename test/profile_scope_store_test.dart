@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/stores/profile_scope_store.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/stores/profile_scope_store.dart';
 
 /// Desktop parity for `SettingsProfileScope`/the Capabilities scope
 /// selector: `override == null` means "follow the active profile" (the same

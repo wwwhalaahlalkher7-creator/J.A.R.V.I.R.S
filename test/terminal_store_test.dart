@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/terminal_store.dart';
-import 'package:hermes_mobile/core/terminal_interactions.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/terminal_store.dart';
+import 'package:jarvis/core/terminal_interactions.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {

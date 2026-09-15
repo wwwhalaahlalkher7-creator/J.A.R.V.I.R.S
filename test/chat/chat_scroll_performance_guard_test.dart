@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/code_block.dart';
-import 'package:hermes_mobile/chat/content/diff_view.dart';
-import 'package:hermes_mobile/chat/content/inline_content_renderer.dart';
-import 'package:hermes_mobile/chat/content/mermaid_view.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
-import 'package:hermes_mobile/widgets/glass/glass_surface.dart';
+import 'package:jarvis/chat/content/code_block.dart';
+import 'package:jarvis/chat/content/diff_view.dart';
+import 'package:jarvis/chat/content/inline_content_renderer.dart';
+import 'package:jarvis/chat/content/mermaid_view.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
+import 'package:jarvis/widgets/glass/glass_surface.dart';
 
 Widget _app(Widget child) => MaterialApp(
   localizationsDelegates: AppLocalizations.localizationsDelegates,

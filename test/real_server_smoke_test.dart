@@ -14,9 +14,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/terminal_gateway.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/terminal_gateway.dart';
 
 void main() {
   final enabled = Platform.environment['HM_REAL_SERVER_E2E'] == '1';

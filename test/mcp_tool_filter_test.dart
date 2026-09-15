@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/mcp_tool_filter.dart';
+import 'package:jarvis/core/mcp_tool_filter.dart';
 
 void main() {
   group('isToolEnabled', () {

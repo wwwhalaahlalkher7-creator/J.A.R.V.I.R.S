@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/transcript/scroll_coordinator.dart';
+import 'package:jarvis/chat/transcript/scroll_coordinator.dart';
 
 void main() {
   test('return to latest supersedes pending history restoration', () {

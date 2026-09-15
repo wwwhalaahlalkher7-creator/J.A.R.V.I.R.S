@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/local_slash_commands.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_en.dart';
+import 'package:jarvis/core/local_slash_commands.dart';
+import 'package:jarvis/l10n/generated/app_localizations_en.dart';
 
 void main() {
   final l10n = AppLocalizationsEn();

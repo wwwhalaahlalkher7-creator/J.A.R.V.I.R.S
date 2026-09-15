@@ -3,17 +3,17 @@ import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
-import 'package:hermes_mobile/core/connections/connection_registry.dart';
-import 'package:hermes_mobile/core/gateway.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/mobile_surface_store.dart';
-import 'package:hermes_mobile/core/stores/pane_workspace_store.dart';
-import 'package:hermes_mobile/core/stores/request_store.dart';
-import 'package:hermes_mobile/core/stores/session_store.dart';
+import 'package:jarvis/core/connections/connection_registry.dart';
+import 'package:jarvis/core/gateway.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/mobile_surface_store.dart';
+import 'package:jarvis/core/stores/pane_workspace_store.dart';
+import 'package:jarvis/core/stores/request_store.dart';
+import 'package:jarvis/core/stores/session_store.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:hermes_mobile/widgets/mobile/mobile_tour_overlay.dart';
+import 'package:jarvis/widgets/mobile/mobile_tour_overlay.dart';
 
 class _SurfaceConnection extends ConnectionStore {
   final controller = StreamController<RoutedGatewayEvent>.broadcast();

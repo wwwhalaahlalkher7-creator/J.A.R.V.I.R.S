@@ -3,8 +3,8 @@ import 'dart:math';
 
 import 'package:crypto/crypto.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/gateway_oauth.dart';
-import 'package:hermes_mobile/core/settings_store.dart';
+import 'package:jarvis/core/gateway_oauth.dart';
+import 'package:jarvis/core/settings_store.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 

@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/update_manifest_crypto.dart';
-import 'package:hermes_mobile/core/update_manifest_schema.dart';
+import 'package:jarvis/core/update_manifest_crypto.dart';
+import 'package:jarvis/core/update_manifest_schema.dart';
 
 Map<String, dynamic> _payload({
   String version = '1.2.0',

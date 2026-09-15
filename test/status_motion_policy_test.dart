@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/l10n/l10n.dart';
-import 'package:hermes_mobile/widgets/h/hermes_status.dart';
-import 'package:hermes_mobile/widgets/h/hermes_states.dart';
+import 'package:jarvis/l10n/l10n.dart';
+import 'package:jarvis/widgets/h/hermes_status.dart';
+import 'package:jarvis/widgets/h/hermes_states.dart';
 
 void main() {
   testWidgets(

@@ -1,6 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/kanban/api.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/kanban/api.dart';
 
 class _RecordingClient extends ApiClient {
   _RecordingClient() : super(baseUrl: 'http://kanban-api.invalid', apiKey: 'k');

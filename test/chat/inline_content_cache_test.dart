@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/inline_content_cache.dart';
+import 'package:jarvis/chat/content/inline_content_cache.dart';
 
 void main() {
   setUp(InlineContentCache.instance.clear);

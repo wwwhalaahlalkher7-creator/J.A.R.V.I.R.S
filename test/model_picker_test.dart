@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/model_catalog.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/widgets/model_picker_sheet.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/model_catalog.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/widgets/model_picker_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:hermes_mobile/theme/hermes_theme.dart';
-import 'package:hermes_mobile/theme/hermes_glass_theme.dart';
+import 'package:jarvis/theme/hermes_theme.dart';
+import 'package:jarvis/theme/hermes_glass_theme.dart';
 
 class _FakeApi extends ApiClient {
   _FakeApi() : super(baseUrl: 'http://contract.invalid', apiKey: 'test');

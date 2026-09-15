@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/chat_message.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/core/chat_message.dart';
+import 'package:jarvis/l10n/generated/app_localizations.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 
 ChatMessage _assistant({
   Map<String, dynamic>? usage,

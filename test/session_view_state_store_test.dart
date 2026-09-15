@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/session_view_state_store.dart';
+import 'package:jarvis/core/stores/session_view_state_store.dart';
 
 void main() {
   test('weighted LRU evicts oldest unprotected session', () {

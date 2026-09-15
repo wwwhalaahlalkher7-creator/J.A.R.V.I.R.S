@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/core/stores/connection_store.dart';
-import 'package:hermes_mobile/core/stores/voice_store.dart';
-import 'package:hermes_mobile/core/voice_activity.dart';
-import 'package:hermes_mobile/core/voice_recorder.dart';
-import 'package:hermes_mobile/core/voice_player.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/core/stores/connection_store.dart';
+import 'package:jarvis/core/stores/voice_store.dart';
+import 'package:jarvis/core/voice_activity.dart';
+import 'package:jarvis/core/voice_recorder.dart';
+import 'package:jarvis/core/voice_player.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class _VoiceApi extends ApiClient {

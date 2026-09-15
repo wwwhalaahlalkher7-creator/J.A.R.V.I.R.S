@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/models.dart';
-import 'package:hermes_mobile/core/starmap_share_code.dart';
+import 'package:jarvis/core/models.dart';
+import 'package:jarvis/core/starmap_share_code.dart';
 
 /// Direct Dart port of hermes-agent desktop's `app/starmap/share-code.test.ts`
 /// sample graph and assertions, so the codec's behavior is verified against

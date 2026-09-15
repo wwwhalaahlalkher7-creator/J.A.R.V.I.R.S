@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/stores/chat_store.dart';
+import 'package:jarvis/core/stores/chat_store.dart';
 
 /// Regression coverage for a real broken session: the backend reports
 /// `timestamp` as epoch-seconds *float* (`1787905997.51`, not an int), and

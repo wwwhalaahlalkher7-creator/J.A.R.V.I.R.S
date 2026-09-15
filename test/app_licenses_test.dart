@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/app_licenses.dart';
+import 'package:jarvis/core/app_licenses.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

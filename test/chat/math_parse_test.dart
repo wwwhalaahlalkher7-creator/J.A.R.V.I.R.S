@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/content/inline_content.dart';
+import 'package:jarvis/chat/content/inline_content.dart';
 
 void main() {
   test('splits a display equation into an InlineMathNode', () {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/widgets/message_bubble.dart';
+import 'package:jarvis/widgets/message_bubble.dart';
 
 void main() {
   testWidgets('one broken message renders a local fallback', (tester) async {

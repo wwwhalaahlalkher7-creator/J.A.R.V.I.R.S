@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/client_capabilities.dart';
+import 'package:jarvis/core/client_capabilities.dart';
 
 void main() {
   test(

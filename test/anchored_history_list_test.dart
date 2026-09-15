@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/chat/transcript/anchored_history_list.dart';
+import 'package:jarvis/chat/transcript/anchored_history_list.dart';
 
 void main() {
   testWidgets('empty history can load, clear and load again', (tester) async {

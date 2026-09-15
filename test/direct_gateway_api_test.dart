@@ -2,10 +2,10 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:hermes_mobile/core/api_client.dart';
-import 'package:hermes_mobile/kanban/api.dart';
-import 'package:hermes_mobile/l10n/generated/app_localizations_en.dart';
-import 'package:hermes_mobile/l10n/runtime_l10n.dart';
+import 'package:jarvis/core/api_client.dart';
+import 'package:jarvis/kanban/api.dart';
+import 'package:jarvis/l10n/generated/app_localizations_en.dart';
+import 'package:jarvis/l10n/runtime_l10n.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
