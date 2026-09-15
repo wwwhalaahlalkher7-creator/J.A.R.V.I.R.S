@@ -25,5 +25,7 @@ class EphemeralMemoryService implements MemoryService {
   Future<String?> recall(String key) async => _items[key.trim()];
 
   @override
-  Future<void> forget(String key) async => _items.remove(key.trim());
+  Future<void> forget(String key) async {
+    _items.remove(key.trim());
+  }
 }

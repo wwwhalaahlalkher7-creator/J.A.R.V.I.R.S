@@ -40,4 +40,4 @@ jobs:
         run: timeout 60s python -m pytest -q tests/test_session_live_state.py tests/test_server.py --maxfail=1
 
       - name: Server smoke test
-        run: ../scripts/backend_smoke.sh
+        run: bash ../scripts/backend_smoke.sh

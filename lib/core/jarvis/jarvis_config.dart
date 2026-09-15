@@ -4,7 +4,7 @@
 /// Hermes remains an implementation detail of the agent runtime.
 class JarvisConfig {
   static const productName = 'JARVIS';
-  static const productVersion = '0.3.0';
+  static const productVersion = '0.3.1';
   static const agentName = 'Hermes Agent';
   static const productTagline = 'Personal AI assistant powered by Hermes Agent';
   static const architecture = 'Flutter + Hermes Agent';

@@ -6,7 +6,7 @@ import '../lib/core/jarvis/memory_service.dart';
 void main() {
   test('JARVIS identity is centralized', () {
     expect(JarvisConfig.productName, 'JARVIS');
-    expect(JarvisConfig.productVersion, '0.1.0');
+    expect(JarvisConfig.productVersion, '0.3.1');
     expect(JarvisConfig.architecture, 'Flutter + Hermes Agent');
   });
 

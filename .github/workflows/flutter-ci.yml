@@ -31,7 +31,16 @@ jobs:
         run: flutter pub get
 
       - name: Analyze
-        run: flutter analyze --no-fatal-infos
+        run: bash scripts/flutter_analyze_ci.sh
+
+      - name: Upload analyzer log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jarvis-flutter-analyze-log
+          path: ${{ runner.temp }}/jarvis-flutter-analyze.log
+          if-no-files-found: ignore
+          retention-days: 7
 
       - name: Test
         run: flutter test --reporter expanded
