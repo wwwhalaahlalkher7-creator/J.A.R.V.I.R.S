@@ -1,3 +1,10 @@
+# JARVIS V0.4 Cloud Foundation
+
+- Added a blitz.cloud-compatible Docker runtime for the Mobile Server.
+- Runtime uses port 8080, linux/amd64, and uid/gid 1000 compatibility.
+- Added cloud deployment documentation for the first end-to-end test.
+- Secrets remain environment variables and are not committed.
+
 # JARVIS 0.3.0 — Executable Development Workflow
 
 - Added Backend CI with compile, API/core tests, and server health smoke test.
