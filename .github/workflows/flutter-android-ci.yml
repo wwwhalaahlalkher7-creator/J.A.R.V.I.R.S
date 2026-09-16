@@ -42,17 +42,27 @@ jobs:
       - name: Show golden update mode
         run: |
           echo "Workflow event: ${{ github.event_name }}"
-          echo "Update goldens: ${{ github.event.inputs.update_goldens || 'false' }}"
+          echo "Update goldens: ${{ inputs.update_goldens || false }}"
 
       - name: Analyze
         run: bash scripts/flutter_analyze_ci.sh
 
       - name: Regenerate Liquid goldens
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.update_goldens == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_goldens }}
         run: flutter test --update-goldens test/liquid_visual_test.dart
 
+      - name: Verify regenerated Liquid goldens
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_goldens }}
+        run: |
+          echo 'Changed golden files:'
+          git status --short test/goldens/preview_*.png
+          if git diff --quiet -- test/goldens/preview_liquid_dark.png test/goldens/preview_liquid_light.png; then
+            echo 'ERROR: Liquid golden files were not regenerated.'
+            exit 1
+          fi
+
       - name: Commit updated Liquid goldens
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.update_goldens == 'true'
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.update_goldens }}
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
